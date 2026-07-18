@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Documentation Generator — Generate complete, professional project documentation from your codebase in minutes. README, API docs, architecture guides, and more.">
+  <meta name="keywords" content="documentation generator, readme generator, api docs, developer tools, ai documentation">
+  <title>AI Doc Generator | Professional Project Documentation</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Highlight.js Theme -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" id="hljs-theme">
+
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  PHASE 1: UPLOAD                                           -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="upload-phase" class="phase active">
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-brand">
+        <div class="brand-icon">⚡</div>
+        <span class="brand-name">AI Doc <span class="brand-accent">Generator</span></span>
+      </div>
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle theme" title="Toggle light/dark mode">
+        <svg id="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-orb orb-1"></div>
+      <div class="hero-orb orb-2"></div>
+      <div class="hero-orb orb-3"></div>
+      <div class="hero-grid"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>Powered by AI Analysis</span>
+      </div>
+
+      <h1 class="hero-title">
+        Generate Complete<br>
+        <span class="gradient-text">Project Documentation</span><br>
+        in Seconds
+      </h1>
+      <p class="hero-subtitle">
+        Upload your project ZIP and let AI analyze your codebase to instantly create
+        professional README files, API docs, architecture guides, and more — ready to ship.
+      </p>
+
+      <!-- Upload Zone -->
+      <div class="upload-area">
+        <div id="drop-zone" class="drop-zone" role="region" aria-label="File upload drop zone">
+          <div class="drop-zone-glow"></div>
+          <div class="drop-zone-inner">
+            <div class="drop-icon-wrap">
+              <div class="drop-icon-ring"></div>
+              <svg class="drop-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <h2 class="drop-title">Drop your project ZIP here</h2>
+            <p class="drop-subtitle">or choose how to import</p>
+
+            <div class="drop-actions">
+              <label for="file-input" class="btn btn-primary" id="file-upload-label">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload ZIP File
+              </label>
+              <input type="file" id="file-input" accept=".zip" hidden aria-label="Upload ZIP file">
+
+              <button id="github-btn" class="btn btn-secondary">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                GitHub URL
+              </button>
+
+              <button id="demo-btn" class="btn btn-ghost">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Try Demo
+              </button>
+            </div>
+
+            <p class="drop-hint">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Supports ZIP files · Any programming language · Up to 50 MB
+            </p>
+          </div>
+        </div>
+
+        <!-- Upload Progress -->
+        <div id="upload-progress" class="upload-progress hidden">
+          <div class="up-header">
+            <span id="upload-progress-title" class="up-title">Extracting files…</span>
+            <span id="upload-progress-pct" class="up-pct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="upload-progress-bar" class="progress-fill" style="width:0%"></div>
+          </div>
+          <div class="upload-stats">
+            <span id="stat-files">— files</span>
+            <span id="stat-size">— KB</span>
+            <span id="stat-langs">Detecting…</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Cards -->
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <div>
+            <h3>README Generator</h3>
+            <p>Complete README with badges, installation steps, and usage examples</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔌</div>
+          <div>
+            <h3>API Documentation</h3>
+            <p>Auto-detect API routes and generate professional endpoint references</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏗️</div>
+          <div>
+            <h3>Architecture Guide</h3>
+            <p>Explain folder structure, data flow, and component relationships</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💡</div>
+          <div>
+            <h3>AI Suggestions</h3>
+            <p>Smart recommendations to improve your project health and security</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  PHASE 2: ANALYZING                                        -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="analysis-phase" class="phase hidden">
+  <div class="analysis-overlay">
+    <div class="analysis-card">
+      <div class="analysis-icon-wrap">
+        <div class="analysis-pulse-ring"></div>
+        <div class="analysis-pulse-ring delay-1"></div>
+        <span class="analysis-emoji">🤖</span>
+      </div>
+      <h2 class="analysis-title">Analyzing your project…</h2>
+      <p class="analysis-subtitle">AI is scanning your codebase and building documentation</p>
+
+      <div class="analysis-bar-wrap">
+        <div class="analysis-bar-track">
+          <div id="analysis-bar" class="analysis-bar-fill"></div>
+        </div>
+        <span id="analysis-pct" class="analysis-pct-text">0%</span>
+      </div>
+
+      <div class="steps-list" id="analysis-steps">
+        <div class="analysis-step" id="step-scanning">
+          <div class="step-status-dot"></div>
+          <span class="step-icon-s">📁</span>
+          <div class="step-body">
+            <span class="step-name">Scanning files</span>
+            <span class="step-detail" id="step-scanning-detail">Pending…</span>
+          </div>
+        </div>
+        <div class="analysis-step" id="step-framework">
+          <div class="step-status-dot"></div>
+          <span class="step-icon-s">🔍</span>
+          <div class="step-body">
+            <span class="step-name">Detecting framework</span>
+            <span class="step-detail" id="step-framework-detail">Pending…</span>
+          </div>
+        </div>
+        <div class="analysis-step" id="step-deps">
+          <div class="step-status-dot"></div>
+          <span class="step-icon-s">📦</span>
+          <div class="step-body">
+            <span class="step-name">Reading dependencies</span>
+            <span class="step-detail" id="step-deps-detail">Pending…</span>
+          </div>
+        </div>
+        <div class="analysis-step" id="step-api">
+          <div class="step-status-dot"></div>
+          <span class="step-icon-s">🔌</span>
+          <div class="step-body">
+            <span class="step-name">Detecting API routes</span>
+            <span class="step-detail" id="step-api-detail">Pending…</span>
+          </div>
+        </div>
+        <div class="analysis-step" id="step-arch">
+          <div class="step-status-dot"></div>
+          <span class="step-icon-s">🏗️</span>
+          <div class="step-body">
+            <span class="step-name">Understanding architecture</span>
+            <span class="step-detail" id="step-arch-detail">Pending…</span>
+          </div>
+        </div>
+        <div class="analysis-step" id="step-generating">
+          <div class="step-status-dot"></div>
+          <span class="step-icon-s">✨</span>
+          <div class="step-body">
+            <span class="step-name">Generating documentation</span>
+            <span class="step-detail" id="step-generating-detail">Pending…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  PHASE 3: DASHBOARD                                        -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="dashboard-phase" class="phase hidden">
+  <!-- Dashboard Header -->
+  <header class="dash-header">
+    <div class="dash-header-inner">
+      <div class="dash-brand">
+        <div class="brand-icon sm">⚡</div>
+        <span class="brand-name">AI Doc <span class="brand-accent">Generator</span></span>
+      </div>
+      <div class="dash-project-meta">
+        <span id="dash-project-name" class="dash-proj-name"></span>
+        <div id="dash-lang-badges" class="dash-lang-badges"></div>
+      </div>
+      <div class="dash-actions">
+        <button id="dash-theme-toggle" class="btn-icon" aria-label="Toggle theme">
+          <svg id="dash-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="dash-icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button id="download-all-btn" class="btn btn-primary btn-sm">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download All
+        </button>
+        <button id="new-project-btn" class="btn btn-ghost btn-sm">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Project
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dashboard Tab Bar -->
+  <nav class="dash-tabs" role="tablist" aria-label="Documentation sections">
+    <button class="tab-btn active" data-tab="overview" role="tab" id="tab-btn-overview" aria-selected="true" aria-controls="tab-overview">
+      <span class="tab-icon-s">📊</span><span class="tab-label">Overview</span>
+    </button>
+    <button class="tab-btn" data-tab="readme" role="tab" id="tab-btn-readme" aria-selected="false" aria-controls="tab-readme">
+      <span class="tab-icon-s">📋</span><span class="tab-label">README</span>
+    </button>
+    <button class="tab-btn" data-tab="installation" role="tab" id="tab-btn-installation" aria-selected="false" aria-controls="tab-installation">
+      <span class="tab-icon-s">🔧</span><span class="tab-label">Installation</span>
+    </button>
+    <button class="tab-btn" data-tab="api" role="tab" id="tab-btn-api" aria-selected="false" aria-controls="tab-api">
+      <span class="tab-icon-s">🔌</span><span class="tab-label">API Docs</span>
+    </button>
+    <button class="tab-btn" data-tab="architecture" role="tab" id="tab-btn-architecture" aria-selected="false" aria-controls="tab-architecture">
+      <span class="tab-icon-s">🏗️</span><span class="tab-label">Architecture</span>
+    </button>
+    <button class="tab-btn" data-tab="contributing" role="tab" id="tab-btn-contributing" aria-selected="false" aria-controls="tab-contributing">
+      <span class="tab-icon-s">🤝</span><span class="tab-label">Contributing</span>
+    </button>
+    <button class="tab-btn" data-tab="changelog" role="tab" id="tab-btn-changelog" aria-selected="false" aria-controls="tab-changelog">
+      <span class="tab-icon-s">📝</span><span class="tab-label">Changelog</span>
+    </button>
+    <button class="tab-btn" data-tab="suggestions" role="tab" id="tab-btn-suggestions" aria-selected="false" aria-controls="tab-suggestions">
+      <span class="tab-icon-s">💡</span><span class="tab-label">AI Suggestions</span>
+      <span id="suggestions-badge" class="tab-badge hidden">0</span>
+    </button>
+  </nav>
+
+  <!-- Dashboard Body: File Tree + Content -->
+  <div class="dash-body">
+    <!-- Left: File Tree -->
+    <aside class="file-tree-panel" id="file-tree-panel">
+      <div class="panel-header">
+        <span class="panel-title">📁 Project Files</span>
+        <div id="tree-stats" class="tree-stats"></div>
+      </div>
+      <div id="file-tree" class="file-tree" role="tree" aria-label="Project file tree"></div>
+    </aside>
+
+    <!-- Right: Tab Content Panel -->
+    <main class="content-panel" id="content-panel">
+
+      <!-- Overview Tab -->
+      <div id="tab-overview" class="tab-content active" role="tabpanel" aria-labelledby="tab-btn-overview">
+        <div class="overview-layout">
+          <div class="overview-scores" id="overview-scores">
+            <div class="score-card">
+              <p class="score-label">Documentation Quality</p>
+              <div class="gauge-wrap">
+                <svg class="gauge-svg" viewBox="0 0 120 120">
+                  <defs>
+                    <linearGradient id="quality-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#7c3aed"/>
+                      <stop offset="100%" stop-color="#a855f7"/>
+                    </linearGradient>
+                  </defs>
+                  <circle class="gauge-track" cx="60" cy="60" r="50"/>
+                  <circle id="quality-gauge" class="gauge-fill" cx="60" cy="60" r="50" stroke="url(#quality-grad)"/>
+                </svg>
+                <div class="gauge-center">
+                  <span id="quality-num" class="gauge-num">0</span>
+                  <span class="gauge-unit">/100</span>
+                </div>
+              </div>
+              <p id="quality-label" class="score-sublabel">—</p>
+            </div>
+            <div class="score-card">
+              <p class="score-label">Project Health</p>
+              <div class="gauge-wrap">
+                <svg class="gauge-svg" viewBox="0 0 120 120">
+                  <defs>
+                    <linearGradient id="health-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#0ea5e9"/>
+                      <stop offset="100%" stop-color="#38bdf8"/>
+                    </linearGradient>
+                  </defs>
+                  <circle class="gauge-track" cx="60" cy="60" r="50"/>
+                  <circle id="health-gauge" class="gauge-fill" cx="60" cy="60" r="50" stroke="url(#health-grad)"/>
+                </svg>
+                <div class="gauge-center">
+                  <span id="health-num" class="gauge-num">0</span>
+                  <span class="gauge-unit">/100</span>
+                </div>
+              </div>
+              <p id="health-label" class="score-sublabel">—</p>
+            </div>
+          </div>
+
+          <div class="overview-cards">
+            <div class="ov-card" id="ov-stats">
+              <h3 class="ov-card-title">Project Overview</h3>
+              <div id="project-stats-grid" class="stats-grid"></div>
+            </div>
+            <div class="ov-card" id="ov-tech">
+              <h3 class="ov-card-title">Tech Stack</h3>
+              <div id="tech-badges-wrap" class="tech-badges"></div>
+            </div>
+            <div class="ov-card" id="ov-deps">
+              <h3 class="ov-card-title">Dependencies</h3>
+              <div id="deps-list" class="deps-list"></div>
+            </div>
+            <div class="ov-card" id="ov-docs">
+              <h3 class="ov-card-title">Generated Documents</h3>
+              <div id="generated-docs-list" class="gen-docs-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doc Panels (README, Installation, API, Architecture, Contributing, Changelog) -->
+      <div id="tab-readme" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-readme">
+        <div class="doc-panel" id="doc-panel-readme" data-doc="readme" data-filename="README.md"></div>
+      </div>
+      <div id="tab-installation" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-installation">
+        <div class="doc-panel" id="doc-panel-installation" data-doc="installation" data-filename="INSTALLATION.md"></div>
+      </div>
+      <div id="tab-api" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-api">
+        <div class="doc-panel" id="doc-panel-api" data-doc="api" data-filename="API_DOCS.md"></div>
+      </div>
+      <div id="tab-architecture" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-architecture">
+        <div class="doc-panel" id="doc-panel-architecture" data-doc="architecture" data-filename="ARCHITECTURE.md"></div>
+      </div>
+      <div id="tab-contributing" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-contributing">
+        <div class="doc-panel" id="doc-panel-contributing" data-doc="contributing" data-filename="CONTRIBUTING.md"></div>
+      </div>
+      <div id="tab-changelog" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-changelog">
+        <div class="doc-panel" id="doc-panel-changelog" data-doc="changelog" data-filename="CHANGELOG.md"></div>
+      </div>
+
+      <!-- AI Suggestions Tab -->
+      <div id="tab-suggestions" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-suggestions">
+        <div class="suggestions-panel">
+          <div class="suggestions-header">
+            <h2 class="doc-title">💡 AI Suggestions</h2>
+            <div class="filter-row" role="group" aria-label="Filter suggestions">
+              <button class="filter-btn active" data-filter="all" id="filter-all">All</button>
+              <button class="filter-btn" data-filter="high" id="filter-high">🔴 High</button>
+              <button class="filter-btn" data-filter="medium" id="filter-medium">🟡 Medium</button>
+              <button class="filter-btn" data-filter="low" id="filter-low">🟢 Low</button>
+            </div>
+          </div>
+          <div id="suggestions-list" class="suggestions-list" role="list"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  MODALS & OVERLAYS                                         -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<!-- GitHub URL Modal -->
+<div id="github-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="github-modal-title">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="github-modal-title" class="modal-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        Import from GitHub
+      </h3>
+      <button id="github-modal-close" class="btn-icon" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <label for="github-url-input" class="input-label">Public Repository URL</label>
+      <input type="url" id="github-url-input" class="input" placeholder="https://github.com/username/repository" autocomplete="off">
+      <p class="input-hint">Only public repositories are supported</p>
+    </div>
+    <div class="modal-footer">
+      <button id="github-cancel-btn" class="btn btn-ghost">Cancel</button>
+      <button id="github-import-btn" class="btn btn-primary">
+        <span id="github-import-text">Import Repository</span>
+        <span id="github-import-spinner" class="spinner hidden"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  SCRIPTS                                                   -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@9.1.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<script src="js/analyzer.js"></script>
+<script src="js/generator.js"></script>
+<script src="js/suggestions.js"></script>
+<script src="js/exporter.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/uploader.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
