@@ -1079,50 +1079,94 @@ ${folderSection}
 
 | Directory | Purpose |
 |-----------|---------|
-${a.framework || a.metaFramework ? `| \`src/components/\` | Reusable UI components |
-| \`src/pages/\` | Page-level components / routes |
-| \`src/hooks/\` | Custom React hooks |
-| \`src/services/\` | API integration layer |
-| \`src/utils/\` | Helper functions and utilities |
-| \`src/types/\` | TypeScript type definitions |
-` : ''
-}${a.backendFramework ? `| \`src/routes/\` | API route definitions |
-| \`src/controllers/\` | Request handlers |
-| \`src/services/\` | Business logic layer |
-| \`src/models/\` | Data models${a.orm ? ` (${a.orm} schemas)` : ''} |
-| \`src/middleware/\` | Express / framework middleware |
-| \`src/config/\` | Configuration files |
-| \`src/utils/\` | Shared utilities |
-` : ''}
-${a.hasTests ? `| \`tests/\` or \`__tests__/\` | Test files |` : ''}
+${(() => {
+  // Build from actual folder tree children
+  const rows = [];
+  const topDirs = (a.folderStructure?.children || [])
+    .filter(c => c.type === 'dir' && !['node_modules','.git','__pycache__','dist','build','.next','.cache','target','out'].includes(c.name))
+    .slice(0, 12);
+  const DIR_PURPOSES = {
+    src: 'Main source code',
+    source: 'Main source code',
+    lib: 'Shared library code',
+    app: 'Application core',
+    api: 'API layer',
+    routes: 'Route definitions',
+    controllers: 'Request handlers',
+    services: 'Business logic',
+    models: 'Data models / schemas',
+    middleware: 'Middleware functions',
+    config: 'Configuration files',
+    utils: 'Utility / helper functions',
+    helpers: 'Helper functions',
+    components: 'UI components',
+    pages: 'Page-level views',
+    views: 'View templates',
+    hooks: 'Custom hooks',
+    store: 'State management',
+    context: 'React context providers',
+    assets: 'Static assets (images, fonts)',
+    static: 'Static files',
+    public: 'Publicly served files',
+    styles: 'CSS / style files',
+    css: 'CSS stylesheets',
+    templates: 'HTML/template files',
+    tests: 'Automated tests',
+    test: 'Automated tests',
+    '__tests__': 'Automated tests',
+    spec: 'Test specifications',
+    docs: 'Documentation',
+    scripts: 'Build / utility scripts',
+    migrations: 'Database migrations',
+    seeds: 'Database seed data',
+    fixtures: 'Test fixtures',
+    types: 'TypeScript type definitions',
+    interfaces: 'TypeScript interfaces',
+    dto: 'Data Transfer Objects',
+    entities: 'Domain entities',
+    repository: 'Data repository layer',
+    repositories: 'Data repository layer',
+    domain: 'Domain layer',
+    infrastructure: 'Infrastructure layer',
+    presentation: 'Presentation / UI layer',
+  };
+  for (const dir of topDirs) {
+    const purpose = DIR_PURPOSES[dir.name.toLowerCase()] || `${dir.name.charAt(0).toUpperCase() + dir.name.slice(1)} files`;
+    rows.push(`| \`${dir.name}/\` | ${purpose} |`);
+    // Also check one level deeper inside 'src'
+    if (dir.name === 'src' && dir.children) {
+      const subDirs = dir.children.filter(c => c.type === 'dir').slice(0, 6);
+      for (const sub of subDirs) {
+        const subPurpose = DIR_PURPOSES[sub.name.toLowerCase()] || `${sub.name.charAt(0).toUpperCase() + sub.name.slice(1)} files`;
+        rows.push(`| \`src/${sub.name}/\` | ${subPurpose} |`);
+      }
+    }
+  }
+  return rows.length > 0 ? rows.join('\n') : '| `./` | Project root |';
+})()}
+
 
 ---
 
 ## 🏛️ Architecture Pattern
 
-${a.backendFramework ?
-`This project follows the **MVC (Model-View-Controller)** pattern:
+${a.architecture?.pattern ?
+`This project follows the **${a.architecture.pattern}**.
 
-- **Models** — Define data structures and database schemas${a.orm ? ` using ${a.orm}` : ''}
-- **Controllers** — Handle HTTP requests, call services, return responses
-- **Services** — Contain business logic, isolated and testable
-- **Routes** — Define URL mappings to controllers
-- **Middleware** — Cross-cutting concerns (auth, logging, validation)
+${a.architecture.patternEvidence?.length ? a.architecture.patternEvidence.map(e => `- ${e}`).join('\n') : ''}
 
-\`\`\`
-Request → Route → Middleware → Controller → Service → Model → Database
-                                                    ↓
-Response ←────────────────────────────────────────────
-\`\`\`` :
-a.framework ?
-`This project uses a **Component-based Architecture**:
-
-- **Components** — Self-contained, reusable UI building blocks
-- **Pages** — Route-level components that compose other components
-- **Hooks** — Reusable stateful logic
-- **Context / Store** — Global state management
-- **Services** — API communication layer` :
-`This project uses a modular architecture with clear separation of concerns.`}
+${a.architecture.layers ? (() => {
+  const lines = [];
+  if (a.architecture.layers.controllers?.length) lines.push(`- **Controllers** (${a.architecture.layers.controllers.length}) — Handle incoming HTTP requests and return responses`);
+  if (a.architecture.layers.services?.length)    lines.push(`- **Services** (${a.architecture.layers.services.length}) — Contain business logic, isolated and testable`);
+  if (a.architecture.layers.repositories?.length) lines.push(`- **Repositories** (${a.architecture.layers.repositories.length}) — Data access layer abstracting database operations`);
+  if (a.architecture.layers.entities?.length)    lines.push(`- **Entities** (${a.architecture.layers.entities.length}) — Domain data models mapped to the database`);
+  if (a.architecture.layers.configs?.length)     lines.push(`- **Config** (${a.architecture.layers.configs.length}) — Application configuration and bean definitions`);
+  return lines.join('\n');
+})() : ''}` :
+a.backendFramework ?
+`Framework **${a.backendFramework}** is detected. No specific architectural pattern was identified from the source — the codebase may use a flat or custom structure.` :
+`No specific architectural pattern was identified from the source code.`}
 
 ${dataFlow}
 
@@ -1132,25 +1176,25 @@ ${componentSection}
 
 ${a.authentication ? `### Authentication Flow
 
-1. User submits credentials (email/password)
-2. Server validates credentials against ${a.database || 'database'}
-3. On success, server generates **${a.authentication}** token
-4. Client stores token (HTTP-only cookie or localStorage)
-5. Token is included in subsequent API requests
-6. Protected routes validate token via middleware
-7. Tokens expire after a configured duration
+1. User submits credentials
+2. Server validates credentials against ${a.database || 'the data store'}
+3. On success, server generates a **${a.authentication}** token
+4. Client stores token securely (HTTP-only cookie recommended)
+5. Token is sent in subsequent API requests
+6. Protected routes validate the token via middleware
 
 ` : ''}
-### Security Measures
+### Detected Security Measures
 
-- Input validation on all user-supplied data
-- ${a.authentication === 'JWT' ? 'JWT tokens with expiration and refresh rotation' : 'Session-based authentication with secure cookies'}
-- Password hashing with bcrypt (saltRounds: 12)
-- CORS policy restricting allowed origins
-- HTTP security headers (Helmet.js or equivalent)
-- Rate limiting to prevent brute force attacks
-- SQL/NoSQL injection prevention via ${a.orm || 'parameterized queries'}
-- Environment variables for all secrets
+${(() => {
+  const bullets = [];
+  if (a.authentication)                        bullets.push(`- **${a.authentication}** — Authentication mechanism detected in source`);
+  if (a.detectedFramework?.data === 'JPA / Hibernate' || a.orm) bullets.push(`- **${a.orm || 'ORM'}** — Parameterised queries prevent SQL injection`);
+  if (a.hasEnvFile)                            bullets.push('- **Environment variables** — Secrets managed via `.env` (not committed to source control)');
+  if (a.securityIssues?.length === 0 && (a.javaClasses?.length || a.jsModules?.length || a.pythonEntities?.length)) bullets.push('- No hardcoded secrets detected in scanned source files');
+  if (a.securityIssues?.length > 0)            bullets.push(`- ⚠️ **${a.securityIssues.length} potential hardcoded secret(s)** detected — review before committing`);
+  return bullets.length > 0 ? bullets.join('\n') : '- No specific security patterns detected from source analysis.';
+})()}
 
 ---
 
@@ -1158,23 +1202,26 @@ ${a.authentication ? `### Authentication Flow
 
 ${a.database ? `The application uses **${a.database}** as the primary data store${a.orm ? ` with **${a.orm}**` : ''}.
 
-### Key Entities
-
-| Entity | Description |
-|--------|-------------|
-| Users | Application users with roles and permissions |
-${a.apiRoutes.slice(0,4).map(r => {
-  const seg = r.path.split('/').filter(Boolean);
-  const resource = seg[1] || seg[0];
-  if (resource && resource !== 'api' && !resource.startsWith(':')) {
-    return `| ${titleCase(resource)} | ${titleCase(resource)} data and related metadata |`;
+${(() => {
+  const entityRows = [];
+  // Use detected features (confidence >= 70) as entities
+  const strongFeatures = (a.features || []).filter(f => f.confidence >= 70).slice(0, 8);
+  if (strongFeatures.length > 0) {
+    return `### Detected Entities\n\n| Entity | Confidence | Layers |\n|--------|-----------|--------| \n${strongFeatures.map(f => `| **${f.entityName}** | ${f.confidence}% | ${f.types.slice(0,2).join(', ')} |`).join('\n')}`;
   }
-  return null;
-}).filter(Boolean).join('\n')}
+  // Fallback: SQL tables
+  if (a.sqlTables?.length > 0) {
+    return `### Database Tables\n\n| Table | Purpose |\n|-------|---------|\n${a.sqlTables.slice(0,8).map(t => `| \`${t}\` | ${t.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())} data |`).join('\n')}`;
+  }
+  // Fallback: routes as resources
+  const resources = [...new Set(a.apiRoutes.slice(0,6).map(r => { const seg = r.path.split('/').filter(Boolean); return seg[1] || seg[0]; }).filter(r => r && r !== 'api' && !r.startsWith(':')))];
+  if (resources.length > 0) {
+    return `### Inferred Resources (from API routes)\n\n| Resource | Description |\n|----------|-------------|\n${resources.map(r => `| ${titleCase(r)} | ${titleCase(r)} data |`).join('\n')}`;
+  }
+  return '_No specific entities detected. Add source code with database models for entity documentation._';
+})()}
 
-### Data Access Pattern
-
-Follows the **Repository Pattern** — data access is abstracted through service layers, making it easy to swap databases or add caching.` : 'No database detected in this project.'}
+${a.orm ? `### Data Access Pattern\n\nData access is abstracted through **${a.orm}** — models define the schema and the ORM handles query generation, migrations, and connection pooling.` : ''}` : 'No database detected in this project.'}
 
 ---
 
@@ -1195,24 +1242,31 @@ ${getInstallCmds(a).test}
 
 ## ⚡ Performance Considerations
 
-- **Caching** — ${a.database === 'Redis' ? 'Redis is used for response and session caching' : 'Consider adding Redis for response caching'}
-- **Pagination** — All list endpoints return paginated results
-- **Indexing** — Database indexes on frequently queried fields
-- **Lazy Loading** — ${a.framework === 'React' || a.framework === 'Vue' ? 'Code splitting and lazy imports for frontend bundles' : 'Load data on demand'}
-- **Compression** — Gzip/Brotli compression for HTTP responses
-- **Connection Pooling** — Reuse database connections
+${(() => {
+  const bullets = [];
+  if (a.database === 'Redis')  bullets.push('- **Redis** — Used for response and session caching');
+  if (a.database && a.database !== 'Redis') bullets.push(`- **Caching** — Consider adding Redis alongside ${a.database} to cache frequent queries`);
+  if (a.apiRoutes.length > 0) bullets.push('- **Pagination** — Implement paginated list endpoints to limit response payload size');
+  if (a.database)             bullets.push('- **Indexing** — Ensure frequently queried fields have database indexes');
+  if (a.framework === 'React' || a.framework === 'Vue') bullets.push('- **Code Splitting** — Use lazy imports to reduce initial bundle size');
+  if (a.hasDocker)            bullets.push('- **Containerisation** — Docker ensures consistent performance across environments');
+  return bullets.length > 0 ? bullets.join('\n') : '- No performance-specific patterns detected from source analysis.';
+})()}
 
 ---
 
 ## 📈 Scalability
 
-This architecture supports horizontal scaling:
-
-1. **Stateless API** — No server-side sessions (${a.authentication ? a.authentication + ' tokens' : 'token-based auth'})
-2. **Database** — ${a.database === 'MongoDB' ? 'MongoDB supports sharding and replica sets' : a.database === 'PostgreSQL' ? 'PostgreSQL with read replicas' : 'Scalable database configuration'}
-3. **Containerization** — ${a.hasDocker ? 'Docker containers for consistent environments' : 'Docker-ready architecture'}
-4. **Load Balancing** — Stateless design enables multiple instances
-5. **Microservices Ready** — Services are loosely coupled
+${(() => {
+  const bullets = [];
+  if (a.authentication)  bullets.push(`1. **Stateless API** — ${a.authentication} tokens enable stateless request handling, simplifying horizontal scaling`);
+  if (a.database === 'MongoDB')    bullets.push('2. **MongoDB** — Supports sharding and replica sets for horizontal scaling');
+  else if (a.database === 'PostgreSQL') bullets.push('2. **PostgreSQL** — Supports read replicas and connection pooling');
+  else if (a.database)             bullets.push(`2. **${a.database}** — Configure for your scaling needs`);
+  if (a.hasDocker)       bullets.push('3. **Docker** — Containers enable consistent multi-instance deployments');
+  if (a.hasCI)           bullets.push('4. **CI/CD** — Automated pipeline for reliable deployments at scale');
+  return bullets.length > 0 ? bullets.join('\n') : '_No scalability-specific patterns detected from source analysis._';
+})()}
 
 ---
 
@@ -1493,15 +1547,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned
-- Performance optimizations and caching layer
-- Enhanced error handling and logging
-- API rate limiting improvements
-- Comprehensive test coverage expansion
-- Internationalization (i18n) support
-- OpenAPI / Swagger documentation
-- Monitoring and observability integration
-
+${(() => {
+  // Only list improvements that are actually relevant to THIS project's detected state
+  const items = [];
+  if (!a.hasTests)     items.push('- Add automated test coverage');
+  if (!a.hasDocker)    items.push('- Add Docker and Docker Compose configuration');
+  if (!a.hasCI)        items.push('- Set up CI/CD pipeline (GitHub Actions or similar)');
+  if (!a.hasLicense)   items.push('- Add an open-source license');
+  if (a.database && !a.database.includes('Redis')) items.push(`- Add Redis caching layer for ${a.database} query results`);
+  if (!a.hasEnvFile && a.envVars.length > 0) items.push('- Create `.env.example` documenting required environment variables');
+  if (a.apiRoutes.length > 0 && !a.authentication) items.push('- Add authentication and authorisation to API endpoints');
+  return items.length > 0 ? `### Planned\n\n${items.join('\n')}` : '> _No pending items identified from source analysis._';
+})()}
 ---
 
 ## [${a.version}] — ${date}

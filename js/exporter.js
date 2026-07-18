@@ -105,13 +105,16 @@ function showToast(message, type = 'info') {
   const toast = document.getElementById('toast');
   if (!toast) return;
 
-  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
   toast.innerHTML = `<span>${icons[type] || icons.info}</span><span>${message}</span>`;
   toast.className = `toast ${type}`;
   toast.classList.remove('hidden');
 
+  // Warnings linger a little longer so users can read them
+  const duration = type === 'warning' ? 5000 : 3500;
   if (toastTimeout) clearTimeout(toastTimeout);
   toastTimeout = setTimeout(() => {
     toast.classList.add('hidden');
-  }, 3500);
+  }, duration);
 }
+

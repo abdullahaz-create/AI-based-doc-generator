@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ AI Doc Generator
+# AI Doc Generator
 
 ![HTML](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
@@ -12,13 +12,13 @@
 
 > A fully client-side, zero-backend web application that analyzes any project ZIP archive or GitHub repository and instantly generates **six professional Markdown documentation files** — README, INSTALLATION, API Docs, Architecture Guide, Contributing Guide, and Changelog — using an evidence-based static code analysis engine.
 
-[📖 Architecture](#-architecture) · [✨ Features](#-features) · [🚀 Getting Started](#-getting-started) · [📁 Project Structure](#-project-structure) · [🛠️ Tech Stack](#️-tech-stack)
+[ Architecture](#-architecture) · [ Features](#-features) · [ Getting Started](#-getting-started) · [ Project Structure](#-project-structure) · [ Tech Stack](#️-tech-stack)
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [About](#-about)
 - [Features](#-features)
@@ -30,12 +30,11 @@
 - [Project Structure](#-project-structure)
 - [Architecture](#-architecture)
 - [Supported Languages & Frameworks](#-supported-languages--frameworks)
-- [Contributing](#-contributing)
-- [License](#-license)
+
 
 ---
 
-## 📖 About
+##  About
 
 **AI Doc Generator** is a browser-only tool (no server, no API calls, no data leaves your machine) that accepts a project ZIP file or a public GitHub repository URL, performs deep static analysis on its source code, and produces a complete documentation suite in seconds.
 
@@ -43,27 +42,27 @@ The core analysis engine (`analyzer.js`) follows a strict evidence-based rule: *
 
 ---
 
-## ✨ Features
+##  Features
 
 - 📦 **ZIP Upload & GitHub Import** — Drag-and-drop a `.zip` file (up to 50 MB) or paste a public GitHub repository URL. The GitHub importer uses the GitHub REST API to fetch the tree and key config files (`package.json`, `requirements.txt`, `pom.xml`, etc.).
 
-- 🔬 **Multi-Language Deep Static Analysis** — The `analyzeProject()` function in `analyzer.js` dispatches dedicated parsers for each language:
+-  **Multi-Language Deep Static Analysis** — The `analyzeProject()` function in `analyzer.js` dispatches dedicated parsers for each language:
   - `analyzeJavaFile()` — extracts package names, class types, annotations (`@SpringBootApplication`, `@RestController`, `@Entity`), route mappings, method signatures, and inheritance
   - `analyzePythonFile()` — extracts imports, class definitions, function signatures, and Flask/FastAPI/Django route decorators
   - `analyzeJSFile()` — extracts ES6/CJS imports, Express `router.get/post/put/delete` routes, React component names, and custom hooks
   - `analyzeSqlFile()` — extracts `CREATE TABLE`, `CREATE PROCEDURE/FUNCTION`, and `CREATE VIEW` statements
 
-- 🧠 **Evidence-Based Framework Detection** — `detectFramework()` identifies Spring Boot, Spring MVC, JavaFX, Java Swing, Android, Next.js, Nuxt.js, SvelteKit, Gatsby, Remix, Astro, React, Vue, Angular, Svelte, Express.js, NestJS, Fastify, Koa, Hono, Django, FastAPI, Flask, Tornado, Streamlit, and Pygame — each backed by explicit import/dependency evidence and assigned a confidence score (0–100).
+-  **Evidence-Based Framework Detection** — `detectFramework()` identifies Spring Boot, Spring MVC, JavaFX, Java Swing, Android, Next.js, Nuxt.js, SvelteKit, Gatsby, Remix, Astro, React, Vue, Angular, Svelte, Express.js, NestJS, Fastify, Koa, Hono, Django, FastAPI, Flask, Tornado, Streamlit, and Pygame — each backed by explicit import/dependency evidence and assigned a confidence score (0–100).
 
-- 🗄️ **Database & ORM Detection** — `detectDatabase()` uses a 6-tier priority chain: Spring `application.properties` datasource URLs → `pom.xml` artifact IDs → `build.gradle` dependencies → `requirements.txt` → `package.json` → JDBC imports. Detected databases include MySQL, PostgreSQL, MariaDB, MongoDB, Redis, SQLite, H2, Oracle, MS SQL Server, Cassandra, Firebase, Supabase, and DynamoDB. ORM detection covers JPA/Hibernate, Prisma, Mongoose, Sequelize, TypeORM, Drizzle ORM, SQLAlchemy, PyMongo, psycopg2, and Peewee.
+-  **Database & ORM Detection** — `detectDatabase()` uses a 6-tier priority chain: Spring `application.properties` datasource URLs → `pom.xml` artifact IDs → `build.gradle` dependencies → `requirements.txt` → `package.json` → JDBC imports. Detected databases include MySQL, PostgreSQL, MariaDB, MongoDB, Redis, SQLite, H2, Oracle, MS SQL Server, Cassandra, Firebase, Supabase, and DynamoDB. ORM detection covers JPA/Hibernate, Prisma, Mongoose, Sequelize, TypeORM, Drizzle ORM, SQLAlchemy, PyMongo, psycopg2, and Peewee.
 
-- 🔐 **Authentication Detection** — `detectAuthentication()` identifies Spring Security, JWT (jjwt / jose), NextAuth.js, Auth.js, Clerk, Passport.js, Firebase Auth, Supabase Auth, Lucia, Better Auth, Auth0, PyJWT, Django AllAuth, Django Simple JWT, and Flask-Login.
+-  **Authentication Detection** — `detectAuthentication()` identifies Spring Security, JWT (jjwt / jose), NextAuth.js, Auth.js, Clerk, Passport.js, Firebase Auth, Supabase Auth, Lucia, Better Auth, Auth0, PyJWT, Django AllAuth, Django Simple JWT, and Flask-Login.
 
-- 🏗️ **Architecture Pattern Recognition** — `detectArchitecture()` classifies Java projects into four patterns: *Layered Architecture (Controller → Service → Repository)*, *MVC with Service Layer*, *Repository Pattern*, or *Controller-based (MVC)*, and locates the application entry point (e.g. the class annotated with `@SpringBootApplication`).
+-  **Architecture Pattern Recognition** — `detectArchitecture()` classifies Java projects into four patterns: *Layered Architecture (Controller → Service → Repository)*, *MVC with Service Layer*, *Repository Pattern*, or *Controller-based (MVC)*, and locates the application entry point (e.g. the class annotated with `@SpringBootApplication`).
 
-- 🧩 **Design Pattern Detection** — `detectDesignPatterns()` scans class names and Spring annotations for Factory, Builder, Observer, Strategy, Decorator, Adapter, Proxy, Command, Template Method, Singleton, Facade, Mediator, Repository, Scheduler (`@Scheduled`), Event-Driven (`@EventListener`), Async (`@Async`), and Cache-Aside (`@Cacheable`) patterns.
+-  **Design Pattern Detection** — `detectDesignPatterns()` scans class names and Spring annotations for Factory, Builder, Observer, Strategy, Decorator, Adapter, Proxy, Command, Template Method, Singleton, Facade, Mediator, Repository, Scheduler (`@Scheduled`), Event-Driven (`@EventListener`), Async (`@Async`), and Cache-Aside (`@Cacheable`) patterns.
 
-- 📄 **Six Auto-Generated Documents** — `generator.js` produces:
+-  **Six Auto-Generated Documents** — `generator.js` produces:
   - `README.md` — project title, Shields.io badges, description, features, tech stack, installation steps, folder tree, environment variable table, deployment section
   - `INSTALLATION.md` — system requirements table, step-by-step setup guide, database-specific extras (Prisma migrate, Django migrations, MongoDB Atlas), troubleshooting section
   - `API_DOCS.md` — base URL table, authentication hint, all detected API routes grouped by resource with request/response examples
@@ -71,28 +70,28 @@ The core analysis engine (`analyzer.js`) follows a strict evidence-based rule: *
   - `CONTRIBUTING.md` — branch naming conventions, commit format, PR checklist
   - `CHANGELOG.md` — initial release entry with detected features
 
-- 💡 **AI Suggestions Panel** — `generateSuggestions()` in `suggestions.js` produces up to 12 prioritized, actionable recommendation cards across categories: Documentation, Security, Testing, CI/CD, DevOps, Performance, Architecture, and Developer Experience (e.g. missing `.gitignore`, missing license, unprotected API endpoints, no test framework, no build tool, large dependency tree).
+-  **AI Suggestions Panel** — `generateSuggestions()` in `suggestions.js` produces up to 12 prioritized, actionable recommendation cards across categories: Documentation, Security, Testing, CI/CD, DevOps, Performance, Architecture, and Developer Experience (e.g. missing `.gitignore`, missing license, unprotected API endpoints, no test framework, no build tool, large dependency tree).
 
-- 📊 **Quality & Health Scores** — `calculateScores()` computes two 0–100 scores based on the presence of a README, LICENSE, CONTRIBUTING.md, `.gitignore`, `.env.example`, tests, Docker support, CI/CD configuration, API routes, and architecture pattern.
+-  **Quality & Health Scores** — `calculateScores()` computes two 0–100 scores based on the presence of a README, LICENSE, CONTRIBUTING.md, `.gitignore`, `.env.example`, tests, Docker support, CI/CD configuration, API routes, and architecture pattern.
 
-- 🔍 **In-Document Search** — Each document panel includes a live search input that walks the rendered Markdown DOM and highlights matching text with `<mark class="search-highlight">` elements.
+-  **In-Document Search** — Each document panel includes a live search input that walks the rendered Markdown DOM and highlights matching text with `<mark class="search-highlight">` elements.
 
-- 👁️ **Preview / Source Toggle** — Every document tab renders both a Marked.js Markdown preview (with highlight.js syntax highlighting via the `atom-one-dark` theme) and a raw Markdown source view.
+- **Preview / Source Toggle** — Every document tab renders both a Marked.js Markdown preview (with highlight.js syntax highlighting via the `atom-one-dark` theme) and a raw Markdown source view.
 
-- 📥 **Export Options** — `exporter.js` provides:
+-  **Export Options** — `exporter.js` provides:
   - Individual `.md` file download via the **Download** button on each tab
   - Copy raw Markdown to clipboard (with `execCommand` fallback)
   - **Download All** button that bundles all six `.md` files plus an `INDEX.md` into a ZIP via JSZip using `DEFLATE` compression
 
-- 🌗 **Light / Dark Theme** — Theme preference (`dark` | `light`) is persisted via `localStorage` under the key `aidocgen-theme`.
+- **Light / Dark Theme** — Theme preference (`dark` | `light`) is persisted via `localStorage` under the key `aidocgen-theme`.
 
-- 🎬 **Try Demo** — The `loadDemoProject()` function in `uploader.js` synthesizes a complete `taskflow-api` project (Node.js + Express + MongoDB) with realistic routes (`/api/auth`, `/api/tasks`, `/api/users`, `/api/projects`), Mongoose models (`Task`, `User`, `Project`), JWT middleware, and a `.env.example`, without requiring any file upload.
+- **Try Demo** — The `loadDemoProject()` function in `uploader.js` synthesizes a complete `taskflow-api` project (Node.js + Express + MongoDB) with realistic routes (`/api/auth`, `/api/tasks`, `/api/users`, `/api/projects`), Mongoose models (`Task`, `User`, `Project`), JWT middleware, and a `.env.example`, without requiring any file upload.
 
-- 🌲 **Interactive File Tree** — `renderFileTree()` in `ui.js` renders a collapsible tree with language-specific emoji icons, auto-expands key directories (`src`, `lib`, `app`, `packages`, `api`), and shows formatted file sizes.
+- **Interactive File Tree** — `renderFileTree()` in `ui.js` renders a collapsible tree with language-specific emoji icons, auto-expands key directories (`src`, `lib`, `app`, `packages`, `api`), and shows formatted file sizes.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology | Version | CDN |
 |-------|-----------|---------|-----|
@@ -110,7 +109,7 @@ The core analysis engine (`analyzer.js`) follows a strict evidence-based rule: *
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -146,7 +145,7 @@ npx serve .
 
 ---
 
-## ⚙️ How It Works
+##  How It Works
 
 The application runs through a linear 3-phase pipeline orchestrated by `app.js`:
 
@@ -195,7 +194,7 @@ While analysis runs, `animateAnalysis()` in `ui.js` drives a 6-step progress ani
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Ai doc generator/
@@ -228,7 +227,7 @@ Ai doc generator/
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -297,7 +296,7 @@ window._appState = {
 
 ---
 
-## 🌐 Supported Languages & Frameworks
+## Supported Languages & Frameworks
 
 ### Programming Languages (auto-detected by file extension)
 
@@ -330,7 +329,7 @@ npm · yarn · pnpm · bun · pip · poetry · pipenv · Maven · Gradle · Carg
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Since there is no build step, development is straightforward.
 
@@ -353,11 +352,9 @@ Contributions are welcome! Since there is no build step, development is straight
 
 ---
 
-## 📄 License
 
-This project is licensed under the **MIT License**.
 
----
+
 
 <div align="center">
 Made with ❤️ — Analyzes your code so you don't have to document it manually.

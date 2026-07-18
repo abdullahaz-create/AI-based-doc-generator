@@ -440,6 +440,36 @@ function animateGauge(gaugeId, numId, labelId, score) {
    Overview Tab
 ───────────────────────────────────────────── */
 function renderOverview(analysis, docs, suggestions) {
+  // ── Confidence warning banner ──
+  const bannerContainer = document.getElementById('confidence-banner');
+  if (bannerContainer) {
+    if (analysis.analysisConfidence === 'low') {
+      bannerContainer.innerHTML = `
+        <div class="confidence-banner confidence-low">
+          <div class="confidence-banner-icon">⚠️</div>
+          <div class="confidence-banner-body">
+            <strong>Limited project signals detected</strong>
+            <p>Documentation may be incomplete or generic. For best results, ensure your ZIP includes source code and a config file (package.json, pom.xml, requirements.txt, Cargo.toml, etc.).</p>
+            ${analysis.detectedSignals?.length ? `<p class="confidence-signals">Detected: ${analysis.detectedSignals.join(' · ')}</p>` : ''}
+          </div>
+          <button class="confidence-banner-close" onclick="this.closest('.confidence-banner').remove()" aria-label="Dismiss">✕</button>
+        </div>`;
+    } else if (analysis.analysisConfidence === 'medium') {
+      bannerContainer.innerHTML = `
+        <div class="confidence-banner confidence-medium">
+          <div class="confidence-banner-icon">ℹ️</div>
+          <div class="confidence-banner-body">
+            <strong>Partial analysis</strong>
+            <p>Some project signals were detected. Documentation covers what was found — add more source files or a config file to unlock deeper analysis.</p>
+            ${analysis.detectedSignals?.length ? `<p class="confidence-signals">Detected: ${analysis.detectedSignals.join(' · ')}</p>` : ''}
+          </div>
+          <button class="confidence-banner-close" onclick="this.closest('.confidence-banner').remove()" aria-label="Dismiss">✕</button>
+        </div>`;
+    } else {
+      bannerContainer.innerHTML = ''; // high confidence — no banner needed
+    }
+  }
+
   // Scores
   animateGauge('quality-gauge', 'quality-num', 'quality-label', analysis.qualityScore);
   animateGauge('health-gauge', 'health-num', 'health-label', analysis.healthScore);
