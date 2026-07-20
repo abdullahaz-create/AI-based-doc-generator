@@ -5,20 +5,20 @@
 ![HTML](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES2024-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![JSZip](https://img.shields.io/badge/JSZip-3.10.1-blue?style=flat-square)
-![Marked](https://img.shields.io/badge/marked-9.1.2-orange?style=flat-square)
-![highlight.js](https://img.shields.io/badge/highlight.js-11.9.0-green?style=flat-square)
+![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4.x-000000?style=flat-square&logo=express&logoColor=white)
+![Gemini](https://img.shields.io/badge/Gemini-2.5_Flash-8E75B2?style=flat-square&logo=google&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
-> A fully client-side, zero-backend web application that analyzes any project ZIP archive or GitHub repository and instantly generates **six professional Markdown documentation files** — README, INSTALLATION, API Docs, Architecture Guide, Contributing Guide, and Changelog — using an evidence-based static code analysis engine.
+> Upload a project ZIP (or paste a GitHub URL) and let **Google Gemini AI** instantly generate six professional Markdown documentation files — README, INSTALLATION, API Docs, Architecture Guide, Contributing Guide, and Changelog — powered by deep static code analysis and a real AI model.
 
-[ Architecture](#-architecture) · [ Features](#-features) · [ Getting Started](#-getting-started) · [ Project Structure](#-project-structure) · [ Tech Stack](#️-tech-stack)
+[Architecture](#-architecture) · [Features](#-features) · [Getting Started](#-getting-started) · [Project Structure](#-project-structure) · [Tech Stack](#️-tech-stack)
 
 </div>
 
 ---
 
-##  Table of Contents
+## Table of Contents
 
 - [About](#-about)
 - [Features](#-features)
@@ -29,168 +29,203 @@
 - [How It Works](#-how-it-works)
 - [Project Structure](#-project-structure)
 - [Architecture](#-architecture)
+- [AI Provider](#-ai-provider)
 - [Supported Languages & Frameworks](#-supported-languages--frameworks)
-
-
----
-
-##  About
-
-**AI Doc Generator** is a browser-only tool (no server, no API calls, no data leaves your machine) that accepts a project ZIP file or a public GitHub repository URL, performs deep static analysis on its source code, and produces a complete documentation suite in seconds.
-
-The core analysis engine (`analyzer.js`) follows a strict evidence-based rule: **every detected technology must be confirmed by actual file content** — an import statement, a dependency entry, an annotation, or a config key. If confidence is below 70%, the field is omitted rather than guessed.
+- [Contributing](#-contributing)
 
 ---
 
-##  Features
+## About
 
-- 📦 **ZIP Upload & GitHub Import** — Drag-and-drop a `.zip` file (up to 50 MB) or paste a public GitHub repository URL. The GitHub importer uses the GitHub REST API to fetch the tree and key config files (`package.json`, `requirements.txt`, `pom.xml`, etc.).
+**AI Doc Generator** accepts a project ZIP file or a public GitHub repository URL, performs deep static analysis on its source code, and then sends the analysis results to a **Google Gemini AI** backend to produce a complete documentation suite in seconds.
 
--  **Multi-Language Deep Static Analysis** — The `analyzeProject()` function in `analyzer.js` dispatches dedicated parsers for each language:
-  - `analyzeJavaFile()` — extracts package names, class types, annotations (`@SpringBootApplication`, `@RestController`, `@Entity`), route mappings, method signatures, and inheritance
-  - `analyzePythonFile()` — extracts imports, class definitions, function signatures, and Flask/FastAPI/Django route decorators
-  - `analyzeJSFile()` — extracts ES6/CJS imports, Express `router.get/post/put/delete` routes, React component names, and custom hooks
-  - `analyzeSqlFile()` — extracts `CREATE TABLE`, `CREATE PROCEDURE/FUNCTION`, and `CREATE VIEW` statements
+The tool works in two stages:
 
--  **Evidence-Based Framework Detection** — `detectFramework()` identifies Spring Boot, Spring MVC, JavaFX, Java Swing, Android, Next.js, Nuxt.js, SvelteKit, Gatsby, Remix, Astro, React, Vue, Angular, Svelte, Express.js, NestJS, Fastify, Koa, Hono, Django, FastAPI, Flask, Tornado, Streamlit, and Pygame — each backed by explicit import/dependency evidence and assigned a confidence score (0–100).
+1. **Static Analysis** (`analyzer.js`) — runs entirely in the browser. Follows a strict evidence-based rule: every detected technology must be confirmed by actual file content. Confidence < 70% → the field is omitted rather than guessed.
 
--  **Database & ORM Detection** — `detectDatabase()` uses a 6-tier priority chain: Spring `application.properties` datasource URLs → `pom.xml` artifact IDs → `build.gradle` dependencies → `requirements.txt` → `package.json` → JDBC imports. Detected databases include MySQL, PostgreSQL, MariaDB, MongoDB, Redis, SQLite, H2, Oracle, MS SQL Server, Cassandra, Firebase, Supabase, and DynamoDB. ORM detection covers JPA/Hibernate, Prisma, Mongoose, Sequelize, TypeORM, Drizzle ORM, SQLAlchemy, PyMongo, psycopg2, and Peewee.
+2. **AI Generation** (`server.js` + Gemini API) — the structured analysis is sent to a lightweight Node.js/Express backend that calls Google Gemini 2.5 Flash to write the actual documentation. **The API key never reaches the browser.**
 
--  **Authentication Detection** — `detectAuthentication()` identifies Spring Security, JWT (jjwt / jose), NextAuth.js, Auth.js, Clerk, Passport.js, Firebase Auth, Supabase Auth, Lucia, Better Auth, Auth0, PyJWT, Django AllAuth, Django Simple JWT, and Flask-Login.
+If the backend is unavailable, the app automatically falls back to the built-in template engine — so it always works.
 
--  **Architecture Pattern Recognition** — `detectArchitecture()` classifies Java projects into four patterns: *Layered Architecture (Controller → Service → Repository)*, *MVC with Service Layer*, *Repository Pattern*, or *Controller-based (MVC)*, and locates the application entry point (e.g. the class annotated with `@SpringBootApplication`).
+---
 
--  **Design Pattern Detection** — `detectDesignPatterns()` scans class names and Spring annotations for Factory, Builder, Observer, Strategy, Decorator, Adapter, Proxy, Command, Template Method, Singleton, Facade, Mediator, Repository, Scheduler (`@Scheduled`), Event-Driven (`@EventListener`), Async (`@Async`), and Cache-Aside (`@Cacheable`) patterns.
+## Features
 
--  **Six Auto-Generated Documents** — `generator.js` produces:
-  - `README.md` — project title, Shields.io badges, description, features, tech stack, installation steps, folder tree, environment variable table, deployment section
-  - `INSTALLATION.md` — system requirements table, step-by-step setup guide, database-specific extras (Prisma migrate, Django migrations, MongoDB Atlas), troubleshooting section
-  - `API_DOCS.md` — base URL table, authentication hint, all detected API routes grouped by resource with request/response examples
-  - `ARCHITECTURE.md` — tech stack list, data flow diagram (ASCII), frontend/backend component breakdown, folder structure
-  - `CONTRIBUTING.md` — branch naming conventions, commit format, PR checklist
-  - `CHANGELOG.md` — initial release entry with detected features
+- 📦 **ZIP Upload & GitHub Import** — Drag-and-drop a `.zip` file (up to 50 MB) or paste a public GitHub repository URL.
 
--  **AI Suggestions Panel** — `generateSuggestions()` in `suggestions.js` produces up to 12 prioritized, actionable recommendation cards across categories: Documentation, Security, Testing, CI/CD, DevOps, Performance, Architecture, and Developer Experience (e.g. missing `.gitignore`, missing license, unprotected API endpoints, no test framework, no build tool, large dependency tree).
+- 🤖 **Gemini AI Documentation** — All six documents are written by Google Gemini 2.5 Flash using rich context built from the project analysis. The AI understands your exact stack, routes, dependencies, and structure.
 
--  **Quality & Health Scores** — `calculateScores()` computes two 0–100 scores based on the presence of a README, LICENSE, CONTRIBUTING.md, `.gitignore`, `.env.example`, tests, Docker support, CI/CD configuration, API routes, and architecture pattern.
+- 🔒 **Secure API Key Handling** — `GEMINI_API_KEY` lives only in `.env` on the server. It is never bundled with or sent to the browser.
 
--  **In-Document Search** — Each document panel includes a live search input that walks the rendered Markdown DOM and highlights matching text with `<mark class="search-highlight">` elements.
+- 🔄 **Automatic Fallback** — If the server is unreachable or the API call fails, the app silently falls back to the local template engine (`generator.js`). Documentation is always generated.
 
-- **Preview / Source Toggle** — Every document tab renders both a Marked.js Markdown preview (with highlight.js syntax highlighting via the `atom-one-dark` theme) and a raw Markdown source view.
+- 🔌 **Swappable AI Provider** — The provider is abstracted behind `src/ai/aiProvider.js`. Switching to OpenAI or Claude requires adding one file and changing one `.env` variable.
 
--  **Export Options** — `exporter.js` provides:
-  - Individual `.md` file download via the **Download** button on each tab
-  - Copy raw Markdown to clipboard (with `execCommand` fallback)
-  - **Download All** button that bundles all six `.md` files plus an `INDEX.md` into a ZIP via JSZip using `DEFLATE` compression
+- 🔍 **Evidence-Based Static Analysis** — Multi-language parser covering Java, Python, JS/TS, SQL, and all major config formats. Detects frameworks, databases, auth, API routes, entities, and design patterns with confidence scoring.
 
-- **Light / Dark Theme** — Theme preference (`dark` | `light`) is persisted via `localStorage` under the key `aidocgen-theme`.
+- ✨ **Six Auto-Generated Documents**:
+  - `README.md` — title, badges, description, features, tech stack, install steps
+  - `INSTALLATION.md` — full step-by-step setup, env vars, troubleshooting
+  - `API_DOCS.md` — all detected endpoints with request/response examples
+  - `ARCHITECTURE.md` — data flow, folder structure, component breakdown
+  - `CONTRIBUTING.md` — branch naming, commit format, PR checklist
+  - `CHANGELOG.md` — initial release with detected features
 
-- **Try Demo** — The `loadDemoProject()` function in `uploader.js` synthesizes a complete `taskflow-api` project (Node.js + Express + MongoDB) with realistic routes (`/api/auth`, `/api/tasks`, `/api/users`, `/api/projects`), Mongoose models (`Task`, `User`, `Project`), JWT middleware, and a `.env.example`, without requiring any file upload.
+- 💡 **AI Suggestions Panel** — Up to 12 prioritized, actionable recommendations across Documentation, Security, Testing, CI/CD, DevOps, Performance, and Architecture.
 
-- **Interactive File Tree** — `renderFileTree()` in `ui.js` renders a collapsible tree with language-specific emoji icons, auto-expands key directories (`src`, `lib`, `app`, `packages`, `api`), and shows formatted file sizes.
+- 📊 **Quality & Health Scores** — Two 0–100 scores computed from project properties (README, tests, Docker, CI, etc.).
+
+- 🔎 **In-Document Search** — Live search with `<mark>` highlighting inside every rendered doc panel.
+
+- 🌗 **Light / Dark Theme** — Persisted via `localStorage`.
+
+- 🎭 **Try Demo** — Synthesizes a complete `taskflow-api` project in-memory without any file upload.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology | Version | CDN |
-|-------|-----------|---------|-----|
-| Structure | HTML5 | — | `index.html` |
-| Styling | Vanilla CSS | — | `css/styles.css` |
-| Logic | Vanilla JavaScript (ES2024) | — | `js/*.js` |
-| ZIP parsing | **JSZip** | 3.10.1 | `cdn.jsdelivr.net` |
-| Markdown rendering | **Marked.js** | 9.1.2 | `cdn.jsdelivr.net` |
-| Syntax highlighting | **highlight.js** | 11.9.0 | `cdnjs.cloudflare.com` |
-| HL.js Theme | `atom-one-dark` | 11.9.0 | `cdnjs.cloudflare.com` |
-| Fonts | Inter + JetBrains Mono | — | `fonts.googleapis.com` |
-| GitHub data | GitHub REST API v3 | — | `api.github.com` |
+### Frontend
 
-> **No build step. No npm dependencies. No backend.** All analysis and generation happens 100% in the browser.
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Structure | HTML5 | — |
+| Styling | Vanilla CSS | — |
+| Logic | Vanilla JavaScript (ES2024) | — |
+| ZIP parsing | **JSZip** | 3.10.1 |
+| Markdown rendering | **Marked.js** | 9.1.2 |
+| Syntax highlighting | **highlight.js** | 11.9.0 |
+| Fonts | Sora + Inter + DM Mono | — |
+
+### Backend
+
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Runtime | **Node.js** | ≥ 18.0.0 |
+| Framework | **Express** | 4.x |
+| AI SDK | **@google/generative-ai** | 0.21.x |
+| Env loading | **dotenv** | 16.x |
+| CORS | **cors** | 2.x |
+| AI Model | **Google Gemini Flash** | `gemini-flash-latest` |
 
 ---
 
-##  Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Any modern web browser (Chrome 90+, Firefox 88+, Edge 90+, Safari 15+)
-- A local HTTP server *(optional but recommended — opening `index.html` directly via `file://` works in most browsers)*
+- **Node.js 18+** and **npm**
+- A **Google Gemini API key** — get one free at [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
 
 ### Running Locally
 
-**Option 1 — No server needed (simplest)**
-
-Just open `index.html` directly in your browser. All CDN resources load over HTTPS.
-
-**Option 2 — VS Code Live Server**
-
-1. Install the [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension
-2. Right-click `index.html` → **Open with Live Server**
-
-**Option 3 — Python HTTP server**
+**1. Clone and install**
 
 ```bash
-cd "Ai doc generator"
-python -m http.server 8080
-# Open http://localhost:8080
+git clone https://github.com/abdullahaz-create/AI-based-doc-generator.git
+cd "AI-based-doc-generator"
+npm install
 ```
 
-**Option 4 — Node.js**
+**2. Configure your API key**
 
 ```bash
-cd "Ai doc generator"
-npx serve .
-# Open the printed URL
+cp .env.example .env
 ```
+
+Open `.env` and set your key:
+
+```env
+GEMINI_API_KEY=AIza...your_real_key_here
+GEMINI_MODEL_NAME=gemini-flash-latest
+AI_PROVIDER=gemini
+PORT=3001
+```
+
+**3. Start the server**
+
+```bash
+npm run dev
+```
+
+You should see:
+
+```
+  ┌─────────────────────────────────────────────┐
+  │       AI Doc Generator — Backend Ready      │
+  ├─────────────────────────────────────────────┤
+  │  URL:       http://localhost:3001            │
+  │  Provider:  GEMINI                          │
+  │  API Key:   ✅ Configured                   │
+  └─────────────────────────────────────────────┘
+```
+
+**4. Open the app**
+
+Navigate to **http://localhost:3001** in your browser.
+
+> ⚠️ **Do not open `index.html` directly** — the AI backend requires the server to be running.
 
 ---
 
-##  How It Works
+## How It Works
 
-The application runs through a linear 3-phase pipeline orchestrated by `app.js`:
+The application runs through a linear pipeline orchestrated by `app.js`:
 
 ```
-Phase 1: Upload  →  Phase 2: Analysis  →  Phase 3: Dashboard
+Phase 1: Upload  →  Phase 2: Analysis  →  AI Generation  →  Phase 3: Dashboard
 ```
 
 ### Phase 1 — Upload (`uploader.js`)
 
 | Input Method | Implementation |
 |---|---|
-| ZIP file (click) | `<input type="file" id="file-input" accept=".zip">` → `handleZipUpload()` |
-| ZIP file (drag-drop) | `drop` event on `#drop-zone` → `handleZipUpload()` |
-| GitHub URL | Modal `#github-modal` → `handleGithubImport()` via GitHub REST API |
+| ZIP file (click) | `<input type="file">` → `handleZipUpload()` |
+| ZIP file (drag-drop) | `drop` event → `handleZipUpload()` |
+| GitHub URL | Modal → `handleGithubImport()` via GitHub REST API |
 | Demo project | `loadDemoProject()` — synthesizes `taskflow-api` in-memory |
 
-`handleZipUpload()` uses **JSZip** to stream-extract entries. Text files matching the `TEXT_EXTS` set (`.js`, `.ts`, `.py`, `.java`, `.go`, `.rs`, `.rb`, `.php`, `.cs`, `.vue`, `.svelte`, `.html`, `.css`, `.sql`, `.json`, `.yaml`, `.md`, `.env`, etc.) are read as UTF-8 strings and truncated to 500,000 characters if necessary. Binary files are skipped.
+### Phase 2 — Analysis (`analyzer.js`)
 
-### Phase 2 — Analysis (`analyzer.js` + animation in `ui.js`)
+`analyzeProject(files)` runs a 13-step pipeline entirely in the browser:
 
-`analyzeProject(files)` runs these 13 steps in sequence:
+1. Filter paths through `IGNORE_DIRS` (skips `node_modules`, `.git`, `dist`, etc.)
+2. Partition files by extension
+3. Parse config files (`package.json`, `pom.xml`, `requirements.txt`, etc.)
+4. Scan source code for env var references
+5. Deep-parse up to 120 Java / 80 Python / 80 JS files
+6. Run all detectors: framework, database, auth, test, API routes, entities, patterns
+7. Compute language stats (byte-weighted)
+8. Extract project metadata
+9. Set boolean flags: `hasReadme`, `hasDocker`, `hasCI`, `hasTests`, etc.
+10. Determine package manager and build tool
+11. Extract SQL table names
+12. Identify large files
+13. Assemble `analysis` object with quality/health scores
 
-1. Filter paths through `IGNORE_DIRS` (skips `node_modules`, `.git`, `target`, `dist`, `.next`, `vendor`, etc.)
-2. Partition files by extension into `javaFiles`, `pythonFiles`, `jsFiles`, `sqlFiles`
-3. Parse config files: `pom.xml` → `parsePomXml()`, `build.gradle` → `parseBuildGradle()`, `package.json` → `JSON.parse()`, `requirements.txt` → `parseRequirementsTxt()`, `application.properties` → `parseApplicationProperties()`, `application.yml` → `parseApplicationYml()`
-4. Scan source code for `process.env.*`, `System.getenv()`, and `os.environ` references to collect env var names
-5. Deep-parse sources: up to 120 Java files, 80 Python files, 80 JS/TS files
-6. Run all detectors: `detectFramework()`, `detectDatabase()`, `detectAuthentication()`, `detectTestFramework()`, `extractFeatures()`, `detectArchitecture()`, `collectApiRoutes()`, `detectDesignPatterns()`, `scanSecurityIssues()`
-7. Compute `computeLanguageStats()` using byte-weighted file counts
-8. Extract project metadata from `package.json` / `pom.xml` / directory name
-9. Set boolean flags: `hasReadme`, `hasLicense`, `hasContributing`, `hasGitignore`, `hasEnvFile`, `hasDocker`, `hasCI`, `hasTests`
-10. Determine `packageManager` and `buildTool` (Maven, Gradle, npm, yarn, pnpm, bun, pip, poetry, pipenv, cargo, go mod, composer, bundler) + detect Vite/Webpack overrides
-11. Extract SQL table names from `CREATE TABLE` statements
-12. Identify large files (> 300 lines)
-13. Assemble the final `analysis` object and compute `qualityScore` / `healthScore`
+### AI Generation (`app.js` → `server.js` → Gemini)
 
-While analysis runs, `animateAnalysis()` in `ui.js` drives a 6-step progress animation (Scanning → Framework → Dependencies → API → Architecture → Generating) with real values from the `analysis` object.
+```
+Browser                          Server (localhost:3001)
+──────                           ──────────────────────
+_serializeAnalysis(analysis)
+  → POST /api/generate × 6      src/routes/generate.js
+    (concurrent)                  → src/prompts/docPrompts.js  (builds prompt)
+                                  → src/ai/aiProvider.js       (factory)
+                                  → src/ai/providers/
+                                      geminiProvider.js        (Gemini SDK)
+                                  → Google Gemini API
+                                  ← Markdown string
+  ← { success, content }
+```
 
-### Phase 3 — Dashboard (`ui.js` + `generator.js` + `suggestions.js`)
+All 6 doc types are requested **concurrently** via `Promise.allSettled`. Individual failures fall back to the template engine without blocking the others.
 
-`generateDocs(analysis)` in `generator.js` renders all six Markdown documents as template strings. `generateSuggestions(analysis)` evaluates 14 rules and returns up to 12 priority-sorted cards. The dashboard renders:
+### Phase 3 — Dashboard (`ui.js` + `suggestions.js`)
 
-- **Overview tab** — two SVG gauge charts (`quality-gauge`, `health-gauge`) animated by `animateGauge()`, a stats grid, tech badges with language color dots, a dependency list, and a generated-docs list
-- **Document tabs** — `initDocPanel()` builds a toolbar (preview/source toggle, search, copy, download buttons), renders Markdown via `marked.parse()`, and applies `hljs.highlightElement()` to code blocks
-- **AI Suggestions tab** — `renderSuggestions()` renders filterable cards by `high` / `medium` / `low` priority
+- **Overview tab** — SVG gauge charts, stats grid, tech badges, dependency list
+- **Document tabs** — `initDocPanel()` renders toolbar + Markdown preview + source view
+- **AI Suggestions tab** — filterable priority cards
 
 ---
 
@@ -198,107 +233,119 @@ While analysis runs, `animateAnalysis()` in `ui.js` drives a 6-step progress ani
 
 ```
 Ai doc generator/
-├── index.html              # Single-page app shell — defines 3 phases (upload, analysis, dashboard)
-│                           #   and all modals. Loads CDN scripts then local JS in dependency order.
+├── server.js                    # Express server — serves frontend + proxies Gemini API
+├── .env                         # 🔒 Local secrets (git-ignored)
+├── .env.example                 # Committed template — copy to .env
+├── .gitignore                   # Protects .env and node_modules
+├── package.json                 # npm scripts + dependencies
+│
+├── src/                         # Backend source
+│   ├── ai/
+│   │   ├── aiProvider.js        # Provider factory — swap Gemini/OpenAI/Claude here
+│   │   └── providers/
+│   │       └── geminiProvider.js # Gemini 2.5 Flash SDK wrapper + error mapping
+│   ├── prompts/
+│   │   └── docPrompts.js        # Prompt builders for all 6 doc types
+│   └── routes/
+│       └── generate.js          # POST /api/generate handler
+│
+├── index.html                   # SPA shell — 3 phases + modals
 ├── css/
-│   └── styles.css          # ~39 KB — full design system: CSS custom properties for light/dark
-│                           #   themes, glassmorphism effects, gauge animations, file tree styles,
-│                           #   suggestion cards, responsive layout, and all component states
-└── js/
-    ├── analyzer.js         # ~72 KB — core analysis engine (1,466 lines). Contains all parsers
-    │                       #   (Java, Python, JS, SQL, pom.xml, build.gradle, .env, requirements.txt),
-    │                       #   all detectors, and the main analyzeProject() orchestrator
-    ├── generator.js        # ~46 KB — documentation template engine (1,337 lines). Generates
-    │                       #   README, INSTALLATION, API_DOCS, ARCHITECTURE, CONTRIBUTING,
-    │                       #   CHANGELOG as Markdown strings via generateDocs()
-    ├── ui.js               # ~25 KB — all DOM rendering: phase transitions, tab navigation,
-    │                       #   doc panel builder (initDocPanel), file tree, gauge animator,
-    │                       #   overview/suggestions renderers, theme toggle, in-doc search
-    ├── uploader.js         # ~20 KB — file ingestion: ZIP parsing (JSZip), drag-and-drop,
-    │                       #   GitHub REST API import, demo project synthesis (loadDemoProject)
-    ├── suggestions.js      # ~8 KB — 14 rule-based suggestion generators sorted by priority
-    ├── exporter.js         # ~4 KB — downloadFile(), downloadAllAsZip(), copyToClipboard(),
-    │                       #   showToast() notification system
-    └── app.js              # ~6 KB — bootstrap, global _appState, main pipeline (onFilesReady),
-    │                       #   tab setup, resetApp()
+│   └── styles.css               # Full design system (light/dark, glassmorphism)
+└── js/                          # Frontend modules (all unchanged from original)
+    ├── aiClient.js              # Browser fetch client → /api/generate
+    ├── analyzer.js              # Evidence-based static analysis engine
+    ├── generator.js             # Template fallback engine
+    ├── suggestions.js           # Rule-based suggestion generator
+    ├── ui.js                    # DOM rendering, tabs, gauges, file tree
+    ├── uploader.js              # ZIP + GitHub import
+    ├── exporter.js              # Download, ZIP export, clipboard, toast
+    └── app.js                   # Bootstrap, pipeline orchestrator, AI fallback
 ```
 
-> **Script load order in `index.html`** (lines 453–459): `analyzer.js` → `generator.js` → `suggestions.js` → `exporter.js` → `ui.js` → `uploader.js` → `app.js`. Each file exposes functions to the global scope; `app.js` is the entry point that wires everything together.
+> **Script load order** in `index.html`: `analyzer.js` → `generator.js` → `suggestions.js` → `exporter.js` → `ui.js` → `uploader.js` → `aiClient.js` → `app.js`
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                     index.html (SPA Shell)              │
-│  Phase 1: #upload-phase  │  Phase 2: #analysis-phase   │
-│  Phase 3: #dashboard-phase (tabs + file tree + panels)  │
-└───────────────────────────┬─────────────────────────────┘
-                            │ DOMContentLoaded
-                            ▼
-                    ┌───────────────┐
-                    │    app.js     │  ← Global _appState
-                    │  bootstrap()  │     { phase, files,
-                    │ onFilesReady()│       analysis, docs,
-                    └──────┬────────┘       suggestions }
-                           │
-         ┌─────────────────┼──────────────────┐
-         ▼                 ▼                  ▼
-  ┌─────────────┐  ┌──────────────┐  ┌───────────────┐
-  │ uploader.js │  │ analyzer.js  │  │ generator.js  │
-  │             │  │              │  │               │
-  │ handleZip   │  │analyzeProject│  │generateDocs() │
-  │ Upload()    │──▶ (files)      │──▶               │
-  │ handleGithub│  │              │  │ generateReadme│
-  │ Import()    │  │  13-step     │  │ generateInst. │
-  │ loadDemo    │  │  pipeline    │  │ generateApi   │
-  │ Project()   │  │              │  │ generateArch  │
-  └─────────────┘  └──────┬───────┘  │ generateContr │
-                          │          │ generateChang │
-                          │          └───────────────┘
-                          │
-              ┌───────────┴───────────┐
-              ▼                       ▼
-    ┌──────────────────┐   ┌───────────────────┐
-    │  suggestions.js  │   │      ui.js         │
-    │                  │   │                   │
-    │generateSuggestions│  │ renderOverview()  │
-    │  (14 rule checks)│   │ renderFileTree()  │
-    └──────────────────┘   │ initDocPanel()    │
-                           │ animateGauge()    │
-                           │ renderSuggestions │
-                           └────────┬──────────┘
-                                    │
-                           ┌────────▼──────────┐
-                           │   exporter.js     │
-                           │                   │
-                           │ downloadFile()    │
-                           │ downloadAllAsZip()│
-                           │ copyToClipboard() │
-                           │ showToast()       │
-                           └───────────────────┘
+Browser (index.html)
+  │
+  ├─ uploader.js    → handleZipUpload / handleGithubImport / loadDemoProject
+  │
+  ├─ analyzer.js    → analyzeProject(files) → analysis object (100% client-side)
+  │
+  ├─ aiClient.js    → POST /api/generate
+  │       │
+  │       └──────────────────────────────────────────────────────────┐
+  │                                                                  ▼
+  │                                                    server.js (Express)
+  │                                                          │
+  │                                               src/routes/generate.js
+  │                                                          │
+  │                                             src/prompts/docPrompts.js
+  │                                                          │
+  │                                              src/ai/aiProvider.js ← factory
+  │                                                          │
+  │                                         src/ai/providers/geminiProvider.js
+  │                                                          │
+  │                                              Google Gemini API  🔒
+  │                                            (GEMINI_API_KEY in .env)
+  │
+  ├─ generator.js   → generateDocs(analysis) — fallback template engine
+  ├─ suggestions.js → generateSuggestions(analysis)
+  └─ ui.js          → renderOverview / renderFileTree / initDocPanel / ...
 ```
 
 ### Global State (`window._appState`)
-
-`app.js` declares a single global object on `window`:
 
 ```js
 window._appState = {
   phase:       'upload',   // 'upload' | 'analysis' | 'dashboard'
   files:       [],         // raw file objects from uploader
   analysis:    null,       // result of analyzeProject()
-  docs:        null,       // result of generateDocs()
+  docs:        null,       // AI-generated or template docs
   suggestions: [],         // result of generateSuggestions()
+  aiAvailable: false,      // true once health probe confirms server + key
 };
 ```
 
 ---
 
+## AI Provider
+
+The AI layer is fully abstracted. To switch providers in the future:
+
+1. Create `src/ai/providers/openaiProvider.js` (export `{ generateDocumentation }`)
+2. Register it in `src/ai/aiProvider.js`:
+   ```js
+   openai: () => require('./providers/openaiProvider'),
+   ```
+3. Update `.env`:
+   ```
+   AI_PROVIDER=openai
+   OPENAI_API_KEY=sk-...
+   ```
+
+No other files need to change.
+
+### Fallback Behaviour
+
+| Scenario | Result |
+|----------|--------|
+| Server running + key valid | ✅ Full Gemini AI generation |
+| Server running + no key | ⚠️ Template fallback + console warning |
+| Server not running | ℹ️ Template fallback (probe fails silently) |
+| Partial failure (some docs fail) | ⚠️ Toast shown; failed docs use templates |
+| Timeout (> 75 s) | ⚠️ Toast + template fallback |
+| Quota exceeded | ⚠️ User-friendly toast + template fallback |
+
+---
+
 ## Supported Languages & Frameworks
 
-### Programming Languages (auto-detected by file extension)
+### Programming Languages
 
 JavaScript · TypeScript · Python · Java · Kotlin · Scala · Go · Rust · Ruby · PHP · C# · C++ · C · Swift · Dart · Vue · Svelte · HTML · CSS/SCSS · SQL · Shell · R · Lua · Elixir
 
@@ -331,13 +378,13 @@ npm · yarn · pnpm · bun · pip · poetry · pipenv · Maven · Gradle · Carg
 
 ## Contributing
 
-Contributions are welcome! Since there is no build step, development is straightforward.
+Contributions are welcome!
 
 1. Fork this repository
 2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Make your changes in the relevant file(s) under `js/` or `css/`
-4. Test by opening `index.html` in a browser and uploading a sample project ZIP
-5. Commit your changes: `git commit -m 'feat: describe your change'`
+3. Make your changes
+4. Test by running `npm run dev` and uploading a sample ZIP
+5. Commit: `git commit -m 'feat: describe your change'`
 6. Push and open a Pull Request
 
 ### Key Extension Points
@@ -346,16 +393,14 @@ Contributions are welcome! Since there is no build step, development is straight
 |---|---|
 | Add a new framework detector | `js/analyzer.js` → `detectFramework()` |
 | Add a new database detector | `js/analyzer.js` → `detectDatabase()` |
-| Modify a generated document template | `js/generator.js` → `generate*()` function |
-| Add a new AI suggestion rule | `js/suggestions.js` → `generateSuggestions()` |
+| Modify a prompt for a doc type | `src/prompts/docPrompts.js` → `build*Prompt()` |
+| Add a new AI provider | `src/ai/providers/yourProvider.js` + register in `aiProvider.js` |
+| Modify the template fallback | `js/generator.js` → `generate*()` function |
+| Add a new suggestion rule | `js/suggestions.js` → `generateSuggestions()` |
 | Change dashboard UI | `js/ui.js` + `css/styles.css` |
 
 ---
 
-
-
-
-
 <div align="center">
-Made with ❤️ — Analyzes your code so you don't have to document it manually.
+Made with ❤️ — Powered by Google Gemini AI · Analyzes your code so you don't have to document it manually.
 </div>
