@@ -1,0 +1,19 @@
+# ── Dependencies ──────────────────────────────────────────────
+node_modules/
+
+# ── Environment secrets ───────────────────────────────────────
+.env
+.env.local
+.env.production
+
+# ── OS / Editor ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.suo
+*.user
+.vscode/settings.json
+
+# ── Logs ──────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
