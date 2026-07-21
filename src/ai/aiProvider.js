@@ -42,8 +42,8 @@ function getProvider() {
     const available = Object.keys(PROVIDERS).join(', ');
     throw new Error(
       `Unknown AI_PROVIDER="${providerName}". ` +
-      `Available providers: ${available}. ` +
-      `Check your .env file.`
+        `Available providers: ${available}. ` +
+        `Check your .env file.`
     );
   }
 

@@ -19,26 +19,29 @@
 require('dotenv').config();
 
 const express = require('express');
-const cors    = require('cors');
-const path    = require('path');
+const cors = require('cors');
+const path = require('path');
 
 const generateRoute = require('./src/routes/generate');
 
 /* ─────────────────────────────────────────────────────────────────────
    App Setup
 ───────────────────────────────────────────────────────────────────── */
-const app  = express();
+const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
 
 /* ── Middleware ──────────────────────────────────────────────────────*/
 // Allow the browser to call /api/* from any origin during local dev.
 // In production, lock this down to your actual domain.
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? false                   // same-origin only in production
-    : true,                   // open for local development
-  methods: ['GET', 'POST'],
-}));
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? false // same-origin only in production
+        : true, // open for local development
+    methods: ['GET', 'POST'],
+  })
+);
 
 // Parse JSON bodies (limit 2 MB — analysis objects can be moderately large)
 app.use(express.json({ limit: '2mb' }));
@@ -65,10 +68,10 @@ app.get('/api/health', (_req, res) => {
       : false;
 
   res.json({
-    status:      'ok',
+    status: 'ok',
     provider,
     keyConfigured,
-    timestamp:   new Date().toISOString(),
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -91,8 +94,8 @@ app.use((err, _req, res, _next) => {
   console.error('[server] Unhandled error:', err);
   res.status(500).json({
     success: false,
-    error:   'Internal server error',
-    code:    'INTERNAL',
+    error: 'Internal server error',
+    code: 'INTERNAL',
   });
 });
 
@@ -101,8 +104,8 @@ app.use((err, _req, res, _next) => {
 ───────────────────────────────────────────────────────────────────── */
 app.listen(PORT, () => {
   const provider = (process.env.AI_PROVIDER || 'gemini').toUpperCase();
-  const keyOk    = process.env.GEMINI_API_KEY &&
-                   process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here';
+  const keyOk =
+    process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here';
 
   console.log('');
   console.log('  ┌─────────────────────────────────────────────┐');
@@ -110,7 +113,9 @@ app.listen(PORT, () => {
   console.log('  ├─────────────────────────────────────────────┤');
   console.log(`  │  URL:       http://localhost:${PORT}             │`);
   console.log(`  │  Provider:  ${provider.padEnd(32)}│`);
-  console.log(`  │  API Key:   ${(keyOk ? '✅ Configured' : '❌ Missing — add to .env').padEnd(32)}│`);
+  console.log(
+    `  │  API Key:   ${(keyOk ? '✅ Configured' : '❌ Missing — add to .env').padEnd(32)}│`
+  );
   console.log('  └─────────────────────────────────────────────┘');
   console.log('');
 
