@@ -15,7 +15,6 @@
 
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-
 /**
  * Returns a fresh Gemini model instance on every call.
  * No caching — so GEMINI_MODEL_NAME changes in .env are reflected immediately.
@@ -30,7 +29,7 @@ function getModel() {
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
     throw new Error(
       'GEMINI_API_KEY is not configured. ' +
-      'Copy .env.example to .env and add your key from https://aistudio.google.com/app/apikey'
+        'Copy .env.example to .env and add your key from https://aistudio.google.com/app/apikey'
     );
   }
 
@@ -42,14 +41,14 @@ function getModel() {
   const model = genAI.getGenerativeModel({
     model: modelName,
     generationConfig: {
-      temperature: 0.4,       // factual, deterministic output
+      temperature: 0.4, // factual, deterministic output
       topP: 0.95,
       maxOutputTokens: parseInt(process.env.AI_MAX_OUTPUT_TOKENS || '8192', 10),
     },
     // Safety settings: relaxed for technical documentation content
     safetySettings: [
-      { category: 'HARM_CATEGORY_HARASSMENT',        threshold: 'BLOCK_ONLY_HIGH' },
-      { category: 'HARM_CATEGORY_HATE_SPEECH',       threshold: 'BLOCK_ONLY_HIGH' },
+      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },
+      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_ONLY_HIGH' },
       { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_ONLY_HIGH' },
       { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' },
     ],
@@ -68,8 +67,7 @@ function getModel() {
  * @throws {AIProviderError}
  */
 async function generateDocumentation(prompt, opts = {}) {
-  const timeoutMs = opts.timeoutMs
-    ?? parseInt(process.env.AI_TIMEOUT_SECONDS || '60', 10) * 1000;
+  const timeoutMs = opts.timeoutMs ?? parseInt(process.env.AI_TIMEOUT_SECONDS || '60', 10) * 1000;
 
   const model = getModel(); // may throw if API key missing
 
@@ -78,10 +76,9 @@ async function generateDocumentation(prompt, opts = {}) {
 
   const timeoutPromise = new Promise((_, reject) => {
     setTimeout(() => {
-      reject(new AIProviderError(
-        `Gemini API request timed out after ${timeoutMs / 1000}s.`,
-        'TIMEOUT'
-      ));
+      reject(
+        new AIProviderError(`Gemini API request timed out after ${timeoutMs / 1000}s.`, 'TIMEOUT')
+      );
     }, timeoutMs);
   });
 

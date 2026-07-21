@@ -4,9 +4,15 @@
   "description": "AI-powered project documentation generator backed by Google Gemini 2.5 Flash.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
-  },
+  "start": "node server.js",
+  "dev": "node server.js",
+  "lint": "eslint .",
+  "lint:fix": "eslint . --fix",
+  "test": "jest --passWithNoTests",
+  "format": "prettier . --write",
+  "format:check": "prettier . --check",
+  "prepare": "husky"
+},
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "cors": "^2.8.5",
@@ -16,5 +22,14 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.7.0",
+    "globals": "^17.7.0",
+    "husky": "^9.1.7",
+    "jest": "^30.4.2",
+    "lint-staged": "^17.1.0",
+    "prettier": "^3.9.6"
+  }
 }

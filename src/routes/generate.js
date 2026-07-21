@@ -19,11 +19,11 @@
 'use strict';
 
 const express = require('express');
-const router  = express.Router();
+const router = express.Router();
 
 const { buildPrompt, SUPPORTED_DOC_TYPES } = require('../prompts/docPrompts');
-const { generateDocumentation }            = require('../ai/aiProvider');
-const { AIProviderError }                  = require('../ai/providers/geminiProvider');
+const { generateDocumentation } = require('../ai/aiProvider');
+const { AIProviderError } = require('../ai/providers/geminiProvider');
 
 /* ─────────────────────────────────────────────────────────────────────
    Input validation
@@ -52,11 +52,16 @@ function validateRequest(body) {
 ───────────────────────────────────────────────────────────────────── */
 function httpStatusForCode(code) {
   switch (code) {
-    case 'AUTH':    return 401;
-    case 'QUOTA':   return 429;
-    case 'TIMEOUT': return 504;
-    case 'SAFETY':  return 422;
-    default:        return 502;
+    case 'AUTH':
+      return 401;
+    case 'QUOTA':
+      return 429;
+    case 'TIMEOUT':
+      return 504;
+    case 'SAFETY':
+      return 422;
+    default:
+      return 502;
   }
 }
 
@@ -86,7 +91,9 @@ router.post('/', async (req, res) => {
   // ── 3. Call AI provider ────────────────────────────────────────────
   let content;
   try {
-    console.log(`[generate] Requesting AI doc: ${docType} for "${analysisContext.projectName || 'unknown'}"`);
+    console.log(
+      `[generate] Requesting AI doc: ${docType} for "${analysisContext.projectName || 'unknown'}"`
+    );
     content = await generateDocumentation(prompt);
     const elapsed = Date.now() - startTime;
     console.log(`[generate] ✅ ${docType} generated in ${elapsed}ms (${content.length} chars)`);
@@ -94,12 +101,14 @@ router.post('/', async (req, res) => {
     const elapsed = Date.now() - startTime;
 
     if (err instanceof AIProviderError) {
-      console.error(`[generate] ❌ AIProviderError [${err.code}] after ${elapsed}ms: ${err.message}`);
+      console.error(
+        `[generate] ❌ AIProviderError [${err.code}] after ${elapsed}ms: ${err.message}`
+      );
       const status = httpStatusForCode(err.code);
       return res.status(status).json({
         success: false,
-        error:   err.message,
-        code:    err.code,
+        error: err.message,
+        code: err.code,
       });
     }
 
@@ -107,8 +116,8 @@ router.post('/', async (req, res) => {
     console.error(`[generate] ❌ Unexpected error after ${elapsed}ms:`, err);
     return res.status(500).json({
       success: false,
-      error:   'An unexpected error occurred while generating documentation.',
-      code:    'INTERNAL',
+      error: 'An unexpected error occurred while generating documentation.',
+      code: 'INTERNAL',
     });
   }
 

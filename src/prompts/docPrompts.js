@@ -22,17 +22,18 @@ function buildContextBlock(analysis) {
   lines.push(`Project name: ${analysis.projectName || 'Unknown'}`);
   lines.push(`Primary language: ${analysis.primaryLanguage || 'Unknown'}`);
 
-  if (analysis.metaFramework)    lines.push(`Meta-framework: ${analysis.metaFramework}`);
-  if (analysis.framework)        lines.push(`Frontend framework: ${analysis.framework}`);
+  if (analysis.metaFramework) lines.push(`Meta-framework: ${analysis.metaFramework}`);
+  if (analysis.framework) lines.push(`Frontend framework: ${analysis.framework}`);
   if (analysis.backendFramework) lines.push(`Backend framework: ${analysis.backendFramework}`);
-  if (analysis.database)         lines.push(`Database: ${analysis.database}${analysis.orm ? ` (ORM: ${analysis.orm})` : ''}`);
-  if (analysis.authentication)   lines.push(`Authentication: ${analysis.authentication}`);
-  if (analysis.packageManager)   lines.push(`Package manager: ${analysis.packageManager}`);
-  if (analysis.buildTool)        lines.push(`Build tool: ${analysis.buildTool}`);
-  if (analysis.testFramework)    lines.push(`Test framework: ${analysis.testFramework}`);
-  if (analysis.license)          lines.push(`License: ${analysis.license}`);
-  if (analysis.version)          lines.push(`Version: ${analysis.version}`);
-  if (analysis.description)      lines.push(`Description: ${analysis.description}`);
+  if (analysis.database)
+    lines.push(`Database: ${analysis.database}${analysis.orm ? ` (ORM: ${analysis.orm})` : ''}`);
+  if (analysis.authentication) lines.push(`Authentication: ${analysis.authentication}`);
+  if (analysis.packageManager) lines.push(`Package manager: ${analysis.packageManager}`);
+  if (analysis.buildTool) lines.push(`Build tool: ${analysis.buildTool}`);
+  if (analysis.testFramework) lines.push(`Test framework: ${analysis.testFramework}`);
+  if (analysis.license) lines.push(`License: ${analysis.license}`);
+  if (analysis.version) lines.push(`Version: ${analysis.version}`);
+  if (analysis.description) lines.push(`Description: ${analysis.description}`);
 
   lines.push(`File count: ${analysis.fileCount || 0}`);
   lines.push(`Has Docker: ${analysis.hasDocker ? 'Yes' : 'No'}`);
@@ -57,24 +58,24 @@ function buildContextBlock(analysis) {
   // API Routes
   if (analysis.apiRoutes && analysis.apiRoutes.length > 0) {
     lines.push(`\nDetected API routes (${analysis.apiRoutes.length} total):`);
-    analysis.apiRoutes.slice(0, 30).forEach(r => {
+    analysis.apiRoutes.slice(0, 30).forEach((r) => {
       lines.push(`  ${r.method ? r.method.toUpperCase() : 'GET'} ${r.path}`);
     });
   }
 
   // Folder structure (top level only)
   if (analysis.folderStructure) {
-    const topLevel = (analysis.folderStructure.children || []).map(c => c.name);
+    const topLevel = (analysis.folderStructure.children || []).map((c) => c.name);
     if (topLevel.length > 0) {
       lines.push(`\nTop-level structure: ${topLevel.join(', ')}`);
     }
   }
 
   // Detected features / entities
-  const features = (analysis.features || []).filter(f => f.confidence >= 70).slice(0, 10);
+  const features = (analysis.features || []).filter((f) => f.confidence >= 70).slice(0, 10);
   if (features.length > 0) {
     lines.push('\nDetected application modules / entities:');
-    features.forEach(f => lines.push(`  - ${f.name} (${(f.types || []).join(', ')})`));
+    features.forEach((f) => lines.push(`  - ${f.name} (${(f.types || []).join(', ')})`));
   }
 
   // SQL tables
@@ -336,12 +337,12 @@ Generate the CHANGELOG.md now:`;
    Public API
 ───────────────────────────────────────────────────────────────────── */
 const PROMPT_BUILDERS = {
-  readme:       buildReadmePrompt,
+  readme: buildReadmePrompt,
   installation: buildInstallationPrompt,
-  api:          buildApiDocsPrompt,
+  api: buildApiDocsPrompt,
   architecture: buildArchitecturePrompt,
   contributing: buildContributingPrompt,
-  changelog:    buildChangelogPrompt,
+  changelog: buildChangelogPrompt,
 };
 
 /**
@@ -354,7 +355,9 @@ const PROMPT_BUILDERS = {
 function buildPrompt(docType, analysis) {
   const builder = PROMPT_BUILDERS[docType];
   if (!builder) {
-    throw new Error(`Unknown doc type: "${docType}". Supported: ${Object.keys(PROMPT_BUILDERS).join(', ')}`);
+    throw new Error(
+      `Unknown doc type: "${docType}". Supported: ${Object.keys(PROMPT_BUILDERS).join(', ')}`
+    );
   }
   return builder(analysis);
 }

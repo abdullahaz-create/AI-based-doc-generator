@@ -13,11 +13,11 @@ function applyTheme(theme) {
   const moons = document.querySelectorAll('[id*="moon"]');
   const suns = document.querySelectorAll('[id*="sun"]');
   if (theme === 'dark') {
-    moons.forEach(el => el.classList.remove('hidden'));
-    suns.forEach(el => el.classList.add('hidden'));
+    moons.forEach((el) => el.classList.remove('hidden'));
+    suns.forEach((el) => el.classList.add('hidden'));
   } else {
-    moons.forEach(el => el.classList.add('hidden'));
-    suns.forEach(el => el.classList.remove('hidden'));
+    moons.forEach((el) => el.classList.add('hidden'));
+    suns.forEach((el) => el.classList.remove('hidden'));
   }
 }
 
@@ -30,7 +30,7 @@ function toggleTheme() {
    Phase Transitions
 ───────────────────────────────────────────── */
 function showPhase(phase) {
-  document.querySelectorAll('.phase').forEach(el => {
+  document.querySelectorAll('.phase').forEach((el) => {
     el.classList.remove('active');
     el.classList.add('hidden');
   });
@@ -53,15 +53,17 @@ async function animateAnalysis(analysis) {
 
   const stepMessages = {
     scanning: `Found ${analysis.fileCount} files (${analysis.formatBytes(analysis.totalSize)})`,
-    framework: analysis.framework || analysis.backendFramework || analysis.metaFramework
-      ? `Detected: ${[analysis.metaFramework, analysis.framework, analysis.backendFramework].filter(Boolean).join(' + ')}`
-      : `Primary language: ${analysis.primaryLanguage}`,
+    framework:
+      analysis.framework || analysis.backendFramework || analysis.metaFramework
+        ? `Detected: ${[analysis.metaFramework, analysis.framework, analysis.backendFramework].filter(Boolean).join(' + ')}`
+        : `Primary language: ${analysis.primaryLanguage}`,
     deps: Object.keys(analysis.dependencies).length
       ? `${Object.keys(analysis.dependencies).length} prod, ${Object.keys(analysis.devDependencies).length} dev dependencies`
       : 'No package manager detected',
-    api: analysis.apiRoutes.length > 0
-      ? `Found ${analysis.apiRoutes.length} API endpoint${analysis.apiRoutes.length > 1 ? 's' : ''}`
-      : 'No API routes found',
+    api:
+      analysis.apiRoutes.length > 0
+        ? `Found ${analysis.apiRoutes.length} API endpoint${analysis.apiRoutes.length > 1 ? 's' : ''}`
+        : 'No API routes found',
     arch: analysis.folderStructure.children?.length
       ? `Mapped ${analysis.folderStructure.children.length} top-level directories`
       : 'Architecture mapped',
@@ -85,13 +87,15 @@ async function animateAnalysis(analysis) {
   }
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
 /* ─────────────────────────────────────────────
    Tab Navigation
 ───────────────────────────────────────────── */
 function setupTabs() {
-  document.querySelectorAll('.tab-btn').forEach(btn => {
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       const tab = btn.dataset.tab;
       switchTab(tab);
@@ -100,11 +104,11 @@ function setupTabs() {
 }
 
 function switchTab(tabId) {
-  document.querySelectorAll('.tab-btn').forEach(btn => {
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
     btn.classList.toggle('active', btn.dataset.tab === tabId);
     btn.setAttribute('aria-selected', btn.dataset.tab === tabId);
   });
-  document.querySelectorAll('.tab-content').forEach(el => {
+  document.querySelectorAll('.tab-content').forEach((el) => {
     el.classList.toggle('active', el.id === `tab-${tabId}`);
   });
 
@@ -182,13 +186,13 @@ function renderMarkdownPreview(docKey, markdown) {
           return hljs.highlight(code, { language: lang }).value;
         }
         return code;
-      }
+      },
     });
     preview.innerHTML = marked.parse(markdown || '*No content generated.*');
 
     // Apply syntax highlighting to code blocks
     if (typeof hljs !== 'undefined') {
-      preview.querySelectorAll('pre code').forEach(el => {
+      preview.querySelectorAll('pre code').forEach((el) => {
         hljs.highlightElement(el);
       });
     }
@@ -242,7 +246,7 @@ function setupDocPanelEvents(docKey, filename, markdown) {
 function searchInPreview(previewEl, query) {
   if (!previewEl) return;
   // Remove existing highlights
-  previewEl.querySelectorAll('mark.search-highlight').forEach(m => {
+  previewEl.querySelectorAll('mark.search-highlight').forEach((m) => {
     m.replaceWith(m.textContent);
   });
   if (!query.trim() || query.length < 2) return;
@@ -262,7 +266,10 @@ function searchInPreview(previewEl, query) {
         span.appendChild(document.createTextNode(text.slice(idx + query.length)));
         node.parentNode.replaceChild(span, node);
       }
-    } else if (node.nodeType === Node.ELEMENT_NODE && !['SCRIPT', 'STYLE', 'PRE', 'CODE'].includes(node.tagName)) {
+    } else if (
+      node.nodeType === Node.ELEMENT_NODE &&
+      !['SCRIPT', 'STYLE', 'PRE', 'CODE'].includes(node.tagName)
+    ) {
       [...node.childNodes].forEach(walk);
     }
   };
@@ -277,7 +284,7 @@ function searchInPreview(previewEl, query) {
 ───────────────────────────────────────────── */
 function renderFileTree(node, container, depth = 0) {
   const items = (node.children || [])
-    .filter(c => !['node_modules', '.git', '__pycache__'].includes(c.name))
+    .filter((c) => !['node_modules', '.git', '__pycache__'].includes(c.name))
     .sort((a, b) => {
       if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
       return a.name.localeCompare(b.name);
@@ -324,7 +331,10 @@ function renderFileTree(node, container, depth = 0) {
       }
 
       // Auto-expand important directories at top level
-      if (depth === 0 && ['src', 'lib', 'app', 'packages', 'api'].includes(item.name.toLowerCase())) {
+      if (
+        depth === 0 &&
+        ['src', 'lib', 'app', 'packages', 'api'].includes(item.name.toLowerCase())
+      ) {
         row.click();
       }
     } else {
@@ -355,14 +365,36 @@ function renderFileTree(node, container, depth = 0) {
 
 function getFolderIcon(name) {
   const icons = {
-    src: '📁', app: '📁', lib: '📚', test: '🧪', tests: '🧪',
-    __tests__: '🧪', public: '🌐', assets: '🖼️', components: '🧩',
-    pages: '📄', api: '🔌', routes: '🛣️', models: '🗃️',
-    controllers: '🎮', services: '⚙️', middleware: '🔀',
-    config: '⚙️', styles: '🎨', css: '🎨', hooks: '🪝',
-    utils: '🔧', helpers: '🔧', types: '🔷', docs: '📖',
-    scripts: '📜', migrations: '🔄', seeds: '🌱',
-    '.github': '🐱', workflows: '⚙️', docker: '🐳',
+    src: '📁',
+    app: '📁',
+    lib: '📚',
+    test: '🧪',
+    tests: '🧪',
+    __tests__: '🧪',
+    public: '🌐',
+    assets: '🖼️',
+    components: '🧩',
+    pages: '📄',
+    api: '🔌',
+    routes: '🛣️',
+    models: '🗃️',
+    controllers: '🎮',
+    services: '⚙️',
+    middleware: '🔀',
+    config: '⚙️',
+    styles: '🎨',
+    css: '🎨',
+    hooks: '🪝',
+    utils: '🔧',
+    helpers: '🔧',
+    types: '🔷',
+    docs: '📖',
+    scripts: '📜',
+    migrations: '🔄',
+    seeds: '🌱',
+    '.github': '🐱',
+    workflows: '⚙️',
+    docker: '🐳',
   };
   return icons[name.toLowerCase()] || '📁';
 }
@@ -377,17 +409,39 @@ function getFileIcon(ext, name) {
   if (name === '.gitignore') return '🔒';
 
   const icons = {
-    '.js': '🟨', '.jsx': '⚛️', '.ts': '🔷', '.tsx': '⚛️',
-    '.py': '🐍', '.java': '☕', '.go': '🐹', '.rs': '🦀',
-    '.rb': '💎', '.php': '🐘', '.cs': '🔵', '.swift': '🍎',
-    '.html': '🌐', '.css': '🎨', '.scss': '🎨',
-    '.json': '📋', '.yaml': '📋', '.yml': '📋', '.toml': '📋',
-    '.md': '📝', '.txt': '📄',
-    '.sh': '⚡', '.bash': '⚡',
-    '.sql': '🗄️', '.graphql': '◉',
-    '.vue': '💚', '.svelte': '🔥',
-    '.png': '🖼️', '.jpg': '🖼️', '.svg': '🖼️',
-    '.test.js': '🧪', '.spec.js': '🧪', '.test.ts': '🧪',
+    '.js': '🟨',
+    '.jsx': '⚛️',
+    '.ts': '🔷',
+    '.tsx': '⚛️',
+    '.py': '🐍',
+    '.java': '☕',
+    '.go': '🐹',
+    '.rs': '🦀',
+    '.rb': '💎',
+    '.php': '🐘',
+    '.cs': '🔵',
+    '.swift': '🍎',
+    '.html': '🌐',
+    '.css': '🎨',
+    '.scss': '🎨',
+    '.json': '📋',
+    '.yaml': '📋',
+    '.yml': '📋',
+    '.toml': '📋',
+    '.md': '📝',
+    '.txt': '📄',
+    '.sh': '⚡',
+    '.bash': '⚡',
+    '.sql': '🗄️',
+    '.graphql': '◉',
+    '.vue': '💚',
+    '.svelte': '🔥',
+    '.png': '🖼️',
+    '.jpg': '🖼️',
+    '.svg': '🖼️',
+    '.test.js': '🧪',
+    '.spec.js': '🧪',
+    '.test.ts': '🧪',
   };
   return icons[ext] || '📄';
 }
@@ -481,23 +535,33 @@ function renderOverview(analysis, docs, suggestions) {
       { key: 'Project Name', val: analysis.projectName },
       { key: 'Version', val: analysis.version || '—' },
       { key: 'Language', val: analysis.primaryLanguage },
-      { key: 'Framework', val: [analysis.metaFramework, analysis.framework, analysis.backendFramework].filter(Boolean)[0] || '—' },
+      {
+        key: 'Framework',
+        val:
+          [analysis.metaFramework, analysis.framework, analysis.backendFramework].filter(
+            Boolean
+          )[0] || '—',
+      },
       { key: 'Database', val: analysis.database || '—' },
       { key: 'Package Manager', val: analysis.packageManager || '—' },
       { key: 'Files', val: analysis.fileCount + ' files' },
       { key: 'Project Size', val: analysis.formatBytes(analysis.totalSize) },
       { key: 'Auth', val: analysis.authentication || '—' },
       { key: 'Build Tool', val: analysis.buildTool || '—' },
-      { key: 'Tests', val: analysis.hasTests ? (analysis.testFramework || 'Yes') : 'Not found' },
+      { key: 'Tests', val: analysis.hasTests ? analysis.testFramework || 'Yes' : 'Not found' },
       { key: 'License', val: analysis.license || 'Not specified' },
     ];
 
-    statsGrid.innerHTML = stats.map(s => `
+    statsGrid.innerHTML = stats
+      .map(
+        (s) => `
       <div class="stat-item">
         <span class="stat-key">${s.key}</span>
         <span class="stat-val">${s.val}</span>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   // Tech badges
@@ -513,15 +577,24 @@ function renderOverview(analysis, docs, suggestions) {
       { label: analysis.buildTool, color: 'sky' },
       { label: analysis.testFramework, color: 'green' },
       { label: analysis.packageManager, color: '' },
-      ...analysis.languages.slice(0, 4).map(l => ({ label: l, color: '', isLang: true, langColor: (analysis.langColors || {})[l] })),
-    ].filter(t => t.label);
+      ...analysis.languages.slice(0, 4).map((l) => ({
+        label: l,
+        color: '',
+        isLang: true,
+        langColor: (analysis.langColors || {})[l],
+      })),
+    ].filter((t) => t.label);
 
-    techWrap.innerHTML = techItems.map(t => `
+    techWrap.innerHTML = techItems
+      .map(
+        (t) => `
       <span class="tech-badge ${t.color}">
         ${t.isLang && t.langColor ? `<span class="lang-dot" style="background:${t.langColor}"></span>` : ''}
         ${t.label}
       </span>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   // Dependencies
@@ -529,16 +602,25 @@ function renderOverview(analysis, docs, suggestions) {
   if (depsList) {
     const allDeps = [
       ...Object.entries(analysis.dependencies).map(([n, v]) => ({ name: n, ver: v, type: 'prod' })),
-      ...Object.entries(analysis.devDependencies).slice(0, 5).map(([n, v]) => ({ name: n, ver: v, type: 'dev' })),
+      ...Object.entries(analysis.devDependencies)
+        .slice(0, 5)
+        .map(([n, v]) => ({ name: n, ver: v, type: 'dev' })),
     ].slice(0, 14);
 
-    depsList.innerHTML = allDeps.length > 0 ? allDeps.map(d => `
+    depsList.innerHTML =
+      allDeps.length > 0
+        ? allDeps
+            .map(
+              (d) => `
       <div class="dep-item">
         <span class="dep-name">${d.name}</span>
         <span class="dep-ver">${d.ver}</span>
         <span class="dep-type">${d.type}</span>
       </div>
-    `).join('') : '<p style="color:var(--text-3);font-size:0.8rem;text-align:center;padding:12px;">No dependencies found</p>';
+    `
+            )
+            .join('')
+        : '<p style="color:var(--text-3);font-size:0.8rem;text-align:center;padding:12px;">No dependencies found</p>';
   }
 
   // Generated docs list
@@ -552,9 +634,10 @@ function renderOverview(analysis, docs, suggestions) {
       { key: 'contributing', icon: '🤝', name: 'CONTRIBUTING.md', tab: 'contributing' },
       { key: 'changelog', icon: '📝', name: 'CHANGELOG.md', tab: 'changelog' },
     ];
-    docsList.innerHTML = docItems.map(d => {
-      const size = docs[d.key] ? formatFileSize(new Blob([docs[d.key]]).size) : '—';
-      return `
+    docsList.innerHTML = docItems
+      .map((d) => {
+        const size = docs[d.key] ? formatFileSize(new Blob([docs[d.key]]).size) : '—';
+        return `
         <div class="gen-doc-item" onclick="switchTab('${d.tab}')" role="button" tabindex="0" aria-label="View ${d.name}">
           <span class="gen-doc-icon">${d.icon}</span>
           <span class="gen-doc-name">${d.name}</span>
@@ -562,7 +645,8 @@ function renderOverview(analysis, docs, suggestions) {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       `;
-    }).join('');
+      })
+      .join('');
   }
 }
 
@@ -590,7 +674,9 @@ function renderSuggestions(suggestions) {
     return;
   }
 
-  list.innerHTML = suggestions.map(s => `
+  list.innerHTML = suggestions
+    .map(
+      (s) => `
     <div class="suggestion-card ${s.priority}" role="listitem" data-priority="${s.priority}">
       <div class="suggestion-icon">${s.icon}</div>
       <div class="suggestion-body">
@@ -602,16 +688,18 @@ function renderSuggestions(suggestions) {
         </div>
       </div>
     </div>
-  `).join('');
+  `
+    )
+    .join('');
 
   // Filter buttons
-  document.querySelectorAll('.filter-btn').forEach(btn => {
+  document.querySelectorAll('.filter-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       const filter = btn.dataset.filter;
-      list.querySelectorAll('.suggestion-card').forEach(card => {
-        card.style.display = (filter === 'all' || card.dataset.priority === filter) ? 'flex' : 'none';
+      list.querySelectorAll('.suggestion-card').forEach((card) => {
+        card.style.display = filter === 'all' || card.dataset.priority === filter ? 'flex' : 'none';
       });
     });
   });
@@ -627,12 +715,14 @@ function populateDashboardHeader(analysis) {
   if (nameEl) nameEl.textContent = analysis.projectName;
   if (badgesEl) {
     const langs = analysis.languages.slice(0, 3);
-    badgesEl.innerHTML = langs.map(l => {
-      const color = (analysis.langColors || {})[l] || '#888';
-      return `<span class="lang-badge">
+    badgesEl.innerHTML = langs
+      .map((l) => {
+        const color = (analysis.langColors || {})[l] || '#888';
+        return `<span class="lang-badge">
         <span class="lang-dot" style="background:${color}"></span>
         ${l}
       </span>`;
-    }).join('');
+      })
+      .join('');
   }
 }

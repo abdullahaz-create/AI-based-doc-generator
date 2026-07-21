@@ -18,10 +18,10 @@
 ───────────────────────────────────────────────────────────────────── */
 const AI_CLIENT_CONFIG = Object.freeze({
   /** Base URL of the backend. Auto-detected from the current origin when served by the server. */
-  baseUrl:    '',          // empty = same origin (works for both dev server and production)
+  baseUrl: '', // empty = same origin (works for both dev server and production)
 
   /** How long to wait for the server to respond (ms). Should be longer than server-side timeout. */
-  timeoutMs:  75_000,      // 75 seconds
+  timeoutMs: 75_000, // 75 seconds
 
   /** How many times to retry on transient network errors before giving up. */
   maxRetries: 1,
@@ -41,8 +41,8 @@ class AIClientError extends Error {
    */
   constructor(message, code = 'UNKNOWN', status = 0) {
     super(message);
-    this.name   = 'AIClientError';
-    this.code   = code;
+    this.name = 'AIClientError';
+    this.code = code;
     this.status = status;
   }
 }
@@ -61,13 +61,12 @@ async function fetchWithTimeout(url, options, timeoutMs) {
     if (err.name === 'AbortError') {
       throw new AIClientError(
         `The AI request timed out after ${timeoutMs / 1000}s. ` +
-        'This can happen with large projects — try again.',
+          'This can happen with large projects — try again.',
         'TIMEOUT'
       );
     }
     throw new AIClientError(
-      'Cannot reach the documentation server. ' +
-      'Make sure `npm run dev` is running.',
+      'Cannot reach the documentation server. ' + 'Make sure `npm run dev` is running.',
       'NETWORK'
     );
   } finally {
@@ -97,7 +96,7 @@ async function parseResponse(response) {
 
   // Map server error codes to user-friendly messages
   const serverCode = body.code || 'UNKNOWN';
-  const serverMsg  = body.error || 'Unknown error';
+  const serverMsg = body.error || 'Unknown error';
 
   switch (response.status) {
     case 400:
@@ -109,11 +108,7 @@ async function parseResponse(response) {
         401
       );
     case 422:
-      throw new AIClientError(
-        'The AI model declined to generate this content.',
-        'SAFETY',
-        422
-      );
+      throw new AIClientError('The AI model declined to generate this content.', 'SAFETY', 422);
     case 429:
       throw new AIClientError(
         'AI quota exceeded. Please wait a moment and try again.',
@@ -155,11 +150,11 @@ async function parseResponse(response) {
  * @throws {AIClientError}         — on any failure
  */
 async function requestAIDoc(docType, analysisContext) {
-  const url  = `${AI_CLIENT_CONFIG.baseUrl}/api/generate`;
+  const url = `${AI_CLIENT_CONFIG.baseUrl}/api/generate`;
   const body = JSON.stringify({ docType, analysisContext });
 
   const options = {
-    method:  'POST',
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body,
   };
@@ -181,14 +176,14 @@ async function requestAIDoc(docType, analysisContext) {
         }
         if (err.code === 'TIMEOUT' && attempt < attempts) {
           // Wait before retrying a timeout
-          await new Promise(r => setTimeout(r, AI_CLIENT_CONFIG.retryDelay));
+          await new Promise((r) => setTimeout(r, AI_CLIENT_CONFIG.retryDelay));
           continue;
         }
       }
 
       // Retry on network errors
       if (attempt < attempts) {
-        await new Promise(r => setTimeout(r, AI_CLIENT_CONFIG.retryDelay));
+        await new Promise((r) => setTimeout(r, AI_CLIENT_CONFIG.retryDelay));
       }
     }
   }

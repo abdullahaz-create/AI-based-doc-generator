@@ -87,26 +87,26 @@ If the backend is unavailable, the app automatically falls back to the built-in 
 
 ### Frontend
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Structure | HTML5 | — |
-| Styling | Vanilla CSS | — |
-| Logic | Vanilla JavaScript (ES2024) | — |
-| ZIP parsing | **JSZip** | 3.10.1 |
-| Markdown rendering | **Marked.js** | 9.1.2 |
-| Syntax highlighting | **highlight.js** | 11.9.0 |
-| Fonts | Sora + Inter + DM Mono | — |
+| Layer               | Technology                  | Version |
+| ------------------- | --------------------------- | ------- |
+| Structure           | HTML5                       | —       |
+| Styling             | Vanilla CSS                 | —       |
+| Logic               | Vanilla JavaScript (ES2024) | —       |
+| ZIP parsing         | **JSZip**                   | 3.10.1  |
+| Markdown rendering  | **Marked.js**               | 9.1.2   |
+| Syntax highlighting | **highlight.js**            | 11.9.0  |
+| Fonts               | Sora + Inter + DM Mono      | —       |
 
 ### Backend
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Runtime | **Node.js** | ≥ 18.0.0 |
-| Framework | **Express** | 4.x |
-| AI SDK | **@google/generative-ai** | 0.21.x |
-| Env loading | **dotenv** | 16.x |
-| CORS | **cors** | 2.x |
-| AI Model | **Google Gemini Flash** | `gemini-flash-latest` |
+| Layer       | Technology                | Version               |
+| ----------- | ------------------------- | --------------------- |
+| Runtime     | **Node.js**               | ≥ 18.0.0              |
+| Framework   | **Express**               | 4.x                   |
+| AI SDK      | **@google/generative-ai** | 0.21.x                |
+| Env loading | **dotenv**                | 16.x                  |
+| CORS        | **cors**                  | 2.x                   |
+| AI Model    | **Google Gemini Flash**   | `gemini-flash-latest` |
 
 ---
 
@@ -178,12 +178,12 @@ Phase 1: Upload  →  Phase 2: Analysis  →  AI Generation  →  Phase 3: Dashb
 
 ### Phase 1 — Upload (`uploader.js`)
 
-| Input Method | Implementation |
-|---|---|
-| ZIP file (click) | `<input type="file">` → `handleZipUpload()` |
-| ZIP file (drag-drop) | `drop` event → `handleZipUpload()` |
-| GitHub URL | Modal → `handleGithubImport()` via GitHub REST API |
-| Demo project | `loadDemoProject()` — synthesizes `taskflow-api` in-memory |
+| Input Method         | Implementation                                             |
+| -------------------- | ---------------------------------------------------------- |
+| ZIP file (click)     | `<input type="file">` → `handleZipUpload()`                |
+| ZIP file (drag-drop) | `drop` event → `handleZipUpload()`                         |
+| GitHub URL           | Modal → `handleGithubImport()` via GitHub REST API         |
+| Demo project         | `loadDemoProject()` — synthesizes `taskflow-api` in-memory |
 
 ### Phase 2 — Analysis (`analyzer.js`)
 
@@ -302,12 +302,12 @@ Browser (index.html)
 
 ```js
 window._appState = {
-  phase:       'upload',   // 'upload' | 'analysis' | 'dashboard'
-  files:       [],         // raw file objects from uploader
-  analysis:    null,       // result of analyzeProject()
-  docs:        null,       // AI-generated or template docs
-  suggestions: [],         // result of generateSuggestions()
-  aiAvailable: false,      // true once health probe confirms server + key
+  phase: 'upload', // 'upload' | 'analysis' | 'dashboard'
+  files: [], // raw file objects from uploader
+  analysis: null, // result of analyzeProject()
+  docs: null, // AI-generated or template docs
+  suggestions: [], // result of generateSuggestions()
+  aiAvailable: false, // true once health probe confirms server + key
 };
 ```
 
@@ -332,14 +332,14 @@ No other files need to change.
 
 ### Fallback Behaviour
 
-| Scenario | Result |
-|----------|--------|
-| Server running + key valid | ✅ Full Gemini AI generation |
-| Server running + no key | ⚠️ Template fallback + console warning |
-| Server not running | ℹ️ Template fallback (probe fails silently) |
-| Partial failure (some docs fail) | ⚠️ Toast shown; failed docs use templates |
-| Timeout (> 75 s) | ⚠️ Toast + template fallback |
-| Quota exceeded | ⚠️ User-friendly toast + template fallback |
+| Scenario                         | Result                                      |
+| -------------------------------- | ------------------------------------------- |
+| Server running + key valid       | ✅ Full Gemini AI generation                |
+| Server running + no key          | ⚠️ Template fallback + console warning      |
+| Server not running               | ℹ️ Template fallback (probe fails silently) |
+| Partial failure (some docs fail) | ⚠️ Toast shown; failed docs use templates   |
+| Timeout (> 75 s)                 | ⚠️ Toast + template fallback                |
+| Quota exceeded                   | ⚠️ User-friendly toast + template fallback  |
 
 ---
 
@@ -351,19 +351,19 @@ JavaScript · TypeScript · Python · Java · Kotlin · Scala · Go · Rust · R
 
 ### Frameworks & Runtimes
 
-| Category | Detected |
-|---|---|
-| Java Backend | Spring Boot, Spring MVC, Core Java, Android |
-| Java UI | JavaFX (+ FXML), Java Swing |
-| Python | Django, FastAPI, Flask, Tornado, Streamlit, Pygame, Tkinter |
-| JS Meta-Framework | Next.js, Nuxt.js, SvelteKit, Gatsby, Remix, Astro |
-| JS UI | React, Vue.js, Angular, Svelte |
-| JS Backend | NestJS, Express.js, Fastify, Koa.js, Hono |
+| Category          | Detected                                                    |
+| ----------------- | ----------------------------------------------------------- |
+| Java Backend      | Spring Boot, Spring MVC, Core Java, Android                 |
+| Java UI           | JavaFX (+ FXML), Java Swing                                 |
+| Python            | Django, FastAPI, Flask, Tornado, Streamlit, Pygame, Tkinter |
+| JS Meta-Framework | Next.js, Nuxt.js, SvelteKit, Gatsby, Remix, Astro           |
+| JS UI             | React, Vue.js, Angular, Svelte                              |
+| JS Backend        | NestJS, Express.js, Fastify, Koa.js, Hono                   |
 
 ### Databases & ORMs
 
-| Databases | ORMs |
-|---|---|
+| Databases                                                                                                              | ORMs                                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | MySQL, PostgreSQL, MariaDB, MongoDB, Redis, SQLite, H2, Oracle, MS SQL Server, Cassandra, Firebase, Supabase, DynamoDB | JPA/Hibernate, Prisma, Mongoose, Sequelize, TypeORM, Drizzle ORM, SQLAlchemy, PyMongo, psycopg2, Peewee, MyBatis, JDBC |
 
 ### Authentication Libraries
@@ -389,15 +389,15 @@ Contributions are welcome!
 
 ### Key Extension Points
 
-| Goal | File to Edit |
-|---|---|
-| Add a new framework detector | `js/analyzer.js` → `detectFramework()` |
-| Add a new database detector | `js/analyzer.js` → `detectDatabase()` |
-| Modify a prompt for a doc type | `src/prompts/docPrompts.js` → `build*Prompt()` |
-| Add a new AI provider | `src/ai/providers/yourProvider.js` + register in `aiProvider.js` |
-| Modify the template fallback | `js/generator.js` → `generate*()` function |
-| Add a new suggestion rule | `js/suggestions.js` → `generateSuggestions()` |
-| Change dashboard UI | `js/ui.js` + `css/styles.css` |
+| Goal                           | File to Edit                                                     |
+| ------------------------------ | ---------------------------------------------------------------- |
+| Add a new framework detector   | `js/analyzer.js` → `detectFramework()`                           |
+| Add a new database detector    | `js/analyzer.js` → `detectDatabase()`                            |
+| Modify a prompt for a doc type | `src/prompts/docPrompts.js` → `build*Prompt()`                   |
+| Add a new AI provider          | `src/ai/providers/yourProvider.js` + register in `aiProvider.js` |
+| Modify the template fallback   | `js/generator.js` → `generate*()` function                       |
+| Add a new suggestion rule      | `js/suggestions.js` → `generateSuggestions()`                    |
+| Change dashboard UI            | `js/ui.js` + `css/styles.css`                                    |
 
 ---
 
