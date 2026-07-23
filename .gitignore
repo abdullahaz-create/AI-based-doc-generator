@@ -1,11 +1,9 @@
 # ── Dependencies ──────────────────────────────────────────────
 node_modules/
-
 # ── Environment secrets ───────────────────────────────────────
 .env
 .env.local
 .env.production
-
 # ── OS / Editor ───────────────────────────────────────────────
 .DS_Store
 Thumbs.db
