@@ -1,9 +1,11 @@
-describe("Sample Test", () => {
+describe("Basic Math", () => {
 
-    test("Should return true", () => {
+  test("2 + 2 = 4", () => {
+    expect(2 + 2).toBe(4);
+  });
 
-        expect(true).toBe(true);
-
-    });
+  test("5 > 3", () => {
+    expect(5).toBeGreaterThan(3);
+  });
 
 });
