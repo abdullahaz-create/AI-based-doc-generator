@@ -2,6 +2,8 @@
  * ui.js — UI rendering, tab navigation, file tree, gauges, search
  */
 
+/* global copyToClipboard, downloadFile */
+
 /* ─────────────────────────────────────────────
    Theme Toggle
 ───────────────────────────────────────────── */
@@ -493,7 +495,7 @@ function animateGauge(gaugeId, numId, labelId, score) {
 /* ─────────────────────────────────────────────
    Overview Tab
 ───────────────────────────────────────────── */
-function renderOverview(analysis, docs, suggestions) {
+function renderOverview(analysis, docs, _suggestions) {
   // ── Confidence warning banner ──
   const bannerContainer = document.getElementById('confidence-banner');
   if (bannerContainer) {
@@ -725,4 +727,35 @@ function populateDashboardHeader(analysis) {
       })
       .join('');
   }
+}
+
+/* ─────────────────────────────────────────────
+   Expose globals for cross-file access via <script> tags
+───────────────────────────────────────────── */
+if (typeof window !== 'undefined') {
+  window.applyTheme = applyTheme;
+  window.toggleTheme = toggleTheme;
+  window.showPhase = showPhase;
+  window.animateAnalysis = animateAnalysis;
+  window.setupTabs = setupTabs;
+  window.switchTab = switchTab;
+  window.renderFileTree = renderFileTree;
+  window.renderOverview = renderOverview;
+  window.renderSuggestions = renderSuggestions;
+  window.populateDashboardHeader = populateDashboardHeader;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    applyTheme,
+    toggleTheme,
+    showPhase,
+    animateAnalysis,
+    setupTabs,
+    switchTab,
+    renderFileTree,
+    renderOverview,
+    renderSuggestions,
+    populateDashboardHeader,
+  };
 }

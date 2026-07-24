@@ -11,54 +11,63 @@
  * (upload, analysis, UI, export) is completely unchanged.
  */
 
+/* global applyTheme, toggleTheme, setupTabs, setupUploader, showToast,
+          showPhase, switchTab, analyzeProject, animateAnalysis,
+          generateSuggestions, populateDashboardHeader, renderFileTree,
+          renderOverview, renderSuggestions, generateDocs, downloadAllAsZip */
+
 /* ─────────────────────────────────────────────
    Global App State
 ───────────────────────────────────────────── */
-window._appState = {
-  phase: 'upload',
-  files: [],
-  analysis: null,
-  docs: null,
-  suggestions: [],
-  /** true once we've confirmed the AI backend is reachable + configured */
-  aiAvailable: false,
-};
+if (typeof window !== 'undefined') {
+  window._appState = {
+    phase: 'upload',
+    files: [],
+    analysis: null,
+    docs: null,
+    suggestions: [],
+    /** true once we've confirmed the AI backend is reachable + configured */
+    aiAvailable: false,
+  };
+}
 
 /* ─────────────────────────────────────────────
    Bootstrap
 ───────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
-  // Restore theme
-  const savedTheme = localStorage.getItem('aidocgen-theme') || 'dark';
-  applyTheme(savedTheme);
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    // Restore theme
+    const savedTheme = localStorage.getItem('aidocgen-theme') || 'dark';
+    applyTheme(savedTheme);
 
-  // Theme toggles
-  document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
-  document.getElementById('dash-theme-toggle')?.addEventListener('click', toggleTheme);
+    // Theme toggles
+    document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+    document.getElementById('dash-theme-toggle')?.addEventListener('click', toggleTheme);
 
-  // Tab navigation
-  setupTabs();
+    // Tab navigation
+    setupTabs();
 
-  // Upload module
-  setupUploader(onFilesReady);
+    // Upload module
+    setupUploader(onFilesReady);
 
-  // Dashboard action buttons
-  document.getElementById('download-all-btn')?.addEventListener('click', () => {
-    const { docs, analysis } = window._appState;
-    if (docs && analysis) {
-      downloadAllAsZip(docs, analysis.projectName);
-    } else {
-      showToast('No documentation generated yet.', 'error');
-    }
+    // Dashboard action buttons
+    document.getElementById('download-all-btn')?.addEventListener('click', () => {
+      const { docs, analysis } = window._appState;
+      if (docs && analysis) {
+        downloadAllAsZip(docs, analysis.projectName);
+      } else {
+        showToast('No documentation generated yet.', 'error');
+      }
+    });
+
+    document.getElementById('new-project-btn')?.addEventListener('click', () => {
+      resetApp();
+    });
+
+    // Probe the AI backend on startup (non-blocking — doesn't delay the UI)
+    _probeAIService();
   });
-
-  document.getElementById('new-project-btn')?.addEventListener('click', () => {
-    resetApp();
-  });
-
-  // Probe the AI backend on startup (non-blocking — doesn't delay the UI)
-  _probeAIService();
-});
+}
 
 /* ─────────────────────────────────────────────
    AI Service Health Probe
@@ -361,4 +370,12 @@ function resetApp() {
 ───────────────────────────────────────────── */
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    onFilesReady,
+    resetApp,
+    sleep,
+  };
 }

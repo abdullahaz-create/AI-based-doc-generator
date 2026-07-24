@@ -10,8 +10,7 @@ app.listen(PORT, () => {
   const provider = (process.env.AI_PROVIDER || 'gemini').toUpperCase();
 
   const keyOk =
-    process.env.GEMINI_API_KEY &&
-    process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here';
+    process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here';
 
   console.log('');
   console.log('  ┌─────────────────────────────────────────────┐');

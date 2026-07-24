@@ -324,7 +324,7 @@ function analyzeJavaFile(content, filepath) {
 
   // Public / protected method names (avoid false positives)
   const methodRx =
-    /(?:public|protected)\s+(?:static\s+)?(?:(?:final|synchronized|abstract|native|default)\s+)*(?:[\w<>\[\]?,\s]+?)\s+(\w+)\s*\([^)]*\)\s*(?:throws\s+[\w,\s]+)?\s*[{;]/gm;
+    /(?:public|protected)\s+(?:static\s+)?(?:(?:final|synchronized|abstract|native|default)\s+)*(?:[\w<>[\]?,\s]+?)\s+(\w+)\s*\([^)]*\)\s*(?:throws\s+[\w,\s]+)?\s*[{;]/gm;
   const BAD_NAMES = new Set([
     'if',
     'while',
@@ -359,7 +359,7 @@ function analyzeJavaFile(content, filepath) {
 
   // Field declarations
   const fieldRx =
-    /(?:private|protected|public)\s+(?:static\s+)?(?:final\s+)?(?:[\w<>\[\]?]+)\s+(\w+)\s*[=;]/gm;
+    /(?:private|protected|public)\s+(?:static\s+)?(?:final\s+)?(?:[\w<>[\]?]+)\s+(\w+)\s*[=;]/gm;
   entity.fields = [
     ...new Set(
       [...content.matchAll(fieldRx)].map((m) => m[1]).filter((n) => n !== 'serialVersionUID')
@@ -492,7 +492,7 @@ function parsePomXml(content) {
   };
 
   const tag = (name, src) => {
-    const m = (src || content).match(new RegExp(`<${name}>([^<]+)<\/${name}>`));
+    const m = (src || content).match(new RegExp(`<${name}>([^<]+)</${name}>`));
     return m ? m[1].trim() : null;
   };
 
@@ -565,7 +565,7 @@ function parseBuildGradle(content) {
   r.springBootVersion = sbM ? sbM[1] : null;
 
   const depRx =
-    /(?:implementation|compile|api|testImplementation|runtimeOnly|compileOnly|annotationProcessor)\s*[\("']([^)"'\n]+)["')]/g;
+    /(?:implementation|compile|api|testImplementation|runtimeOnly|compileOnly|annotationProcessor)\s*[("']([^)"'\n]+)["')]/g;
   r.dependencies = [...content.matchAll(depRx)].map((m) => m[1].trim());
 
   const pluginRx = /id\s+['"]([^'"]+)['"]/g;
@@ -625,7 +625,7 @@ function parseRequirementsTxt(content) {
     .split('\n')
     .map((l) => l.trim())
     .filter((l) => l && !l.startsWith('#') && !l.startsWith('-r') && !l.startsWith('--'))
-    .map((l) => ({ name: l.split(/[>=<!=\[;]/)[0].trim(), raw: l }))
+    .map((l) => ({ name: l.split(/[>=<![ ;]/)[0].trim(), raw: l }))
     .filter((d) => d.name);
 }
 
@@ -671,7 +671,7 @@ function parseCargoToml(content) {
   }
 
   // [dependencies] — extract crate names
-  const depsSection = content.match(/\[dependencies\]([\s\S]*?)(?=^\[|\Z)/m);
+  const depsSection = content.match(/\[dependencies\]([\s\S]*?)(?=^\[|$)/m);
   if (depsSection) {
     r.dependencies = [...depsSection[1].matchAll(/^\s*([\w-]+)\s*=/gm)].map((m) => m[1]);
   }
@@ -693,10 +693,10 @@ function parseGoMod(content) {
   const reqBlock =
     content.match(/require\s*\(([^)]+)\)/s) || content.match(/require\s*\(([^)]+)\)/m);
   if (reqBlock) {
-    r.dependencies = [...reqBlock[1].matchAll(/^\s*([\w./\-]+)\s+v/gm)].map((m) => m[1]);
+    r.dependencies = [...reqBlock[1].matchAll(/^\s*([\w./-]+)\s+v/gm)].map((m) => m[1]);
   } else {
     // single-line requires
-    r.dependencies = [...content.matchAll(/^require\s+([\w./\-]+)\s+v/gm)].map((m) => m[1]);
+    r.dependencies = [...content.matchAll(/^require\s+([\w./-]+)\s+v/gm)].map((m) => m[1]);
   }
   return r;
 }
@@ -726,7 +726,7 @@ function parsePyprojectToml(content) {
 
   // dependencies list under [tool.poetry.dependencies] or [project] dependencies
   const depSection =
-    content.match(/\[tool\.poetry\.dependencies\]([\s\S]*?)(?=^\[|\Z)/m) ||
+    content.match(/\[tool\.poetry\.dependencies\]([\s\S]*?)(?=^\[|$)/m) ||
     content.match(/\[project\][\s\S]*?dependencies\s*=\s*\[([^\]]*)\]/m);
   if (depSection) {
     r.dependencies = [...depSection[1].matchAll(/^\s*([\w-]+)\s*[=^~<>]/gm)]
@@ -1591,7 +1591,6 @@ function extractFeatures(javaClasses, pythonEntities, jsModules, sqlData) {
   // ── SQL tables ──
   for (const sqlF of sqlData) {
     for (const table of sqlF.tables || []) {
-      const entityName = table.replace(/_/g, '').replace(/s$/, ''); // rough singular camel
       const displayName = table
         .replace(/_/g, ' ')
         .replace(/\b\w/g, (c) => c.toUpperCase())
@@ -1618,7 +1617,7 @@ function extractFeatures(javaClasses, pythonEntities, jsModules, sqlData) {
     const types = [...data.types];
     const count = data.classes.length;
 
-    let confidence = 55;
+    let confidence;
     if (count >= 3) confidence = 95;
     else if (count === 2) confidence = 82;
     else confidence = 68;
@@ -1941,7 +1940,7 @@ function scanSecurityIssues(files) {
   const issues = [];
   const HARDCODED_PATTERNS = [
     { rx: /password\s*[:=]\s*["']([^"']{6,})["']/gi, label: 'Hardcoded password' },
-    { rx: /api[_-]?key\s*[:=]\s*["']([A-Za-z0-9_\-]{10,})["']/gi, label: 'Hardcoded API key' },
+    { rx: /api[_-]?key\s*[:=]\s*["']([A-Za-z0-9_-]{10,})["']/gi, label: 'Hardcoded API key' },
     { rx: /secret\s*[:=]\s*["']([^"']{8,})["']/gi, label: 'Hardcoded secret' },
   ];
   const IGNORE_VALUES = new Set([
@@ -2049,16 +2048,13 @@ function analyzeProject(files) {
   if (readmeFile?.content) {
     const lines = readmeFile.content.split('\n');
     // Skip the title line (# ...) and any badge lines, find the first real paragraph
-    let inContent = false;
     for (const line of lines) {
       const t = line.trim();
       if (!t) {
-        inContent = false;
         continue;
       }
       // Skip headings, badges, html tags, horizontal rules, toc
       if (t.startsWith('#')) {
-        inContent = false;
         continue;
       }
       if (t.startsWith('![') || t.startsWith('<') || t.startsWith('---') || t.startsWith('==='))
@@ -2492,4 +2488,25 @@ function analyzeProject(files) {
   analysis.analysisConfidence = analysisConfidence;
 
   return analysis;
+}
+
+/* ─────────────────────────────────────────────
+   Expose globals for cross-file access via <script> tags
+───────────────────────────────────────────── */
+if (typeof window !== 'undefined') {
+  window.analyzeProject = analyzeProject;
+  window.formatBytes = formatBytes;
+  window.countLines = countLines;
+  window.getExt = getExt;
+  window.isIgnored = isIgnored;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    analyzeProject,
+    formatBytes,
+    countLines,
+    getExt,
+    isIgnored,
+  };
 }

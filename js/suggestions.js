@@ -119,7 +119,6 @@ function generateSuggestions(analysis) {
 
   // ── Dependency Health ──
   const depCount = Object.keys(analysis.dependencies).length;
-  const devDepCount = Object.keys(analysis.devDependencies).length;
   if (depCount > 50) {
     s.push({
       id: 'many-deps',
@@ -212,4 +211,17 @@ function generateSuggestions(analysis) {
   // Limit to 12 suggestions, sort by priority
   const order = { high: 0, medium: 1, low: 2 };
   return s.sort((a, b) => order[a.priority] - order[b.priority]).slice(0, 12);
+}
+
+/* ─────────────────────────────────────────────
+   Expose globals for cross-file access via <script> tags
+───────────────────────────────────────────── */
+if (typeof window !== 'undefined') {
+  window.generateSuggestions = generateSuggestions;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    generateSuggestions,
+  };
 }

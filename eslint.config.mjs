@@ -10,7 +10,7 @@ export default defineConfig([
 
   // Backend (Node.js)
   {
-    files: ['server.js', 'src/**/*.js', 'scripts/**/*.js', 'test/**/*.js'],
+    files: ['server.js', 'src/**/*.js', 'scripts/**/*.js', 'tests/**/*.js'],
     plugins: {
       js,
     },
@@ -18,8 +18,12 @@ export default defineConfig([
     languageOptions: {
       globals: {
         ...globals.node,
+        ...globals.jest,
       },
       sourceType: 'commonjs',
+    },
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
 
@@ -33,8 +37,15 @@ export default defineConfig([
     languageOptions: {
       globals: {
         ...globals.browser,
+
+        JSZip: 'readonly',
+        marked: 'readonly',
+        hljs: 'readonly',
       },
       sourceType: 'script',
+    },
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
 ]);
