@@ -211,4 +211,14 @@ async function checkAIServiceHealth() {
 }
 
 // Expose to global scope (loaded as a plain <script> tag)
-window._aiClient = { requestAIDoc, checkAIServiceHealth, AIClientError };
+if (typeof window !== 'undefined') {
+  window._aiClient = { requestAIDoc, checkAIServiceHealth, AIClientError };
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    requestAIDoc,
+    checkAIServiceHealth,
+    AIClientError,
+  };
+}

@@ -2,6 +2,8 @@
  * uploader.js — File upload, drag-and-drop, ZIP extraction, GitHub import
  */
 
+/* global showToast */
+
 /* ─────────────────────────────────────────────
    Upload Handlers Setup
 ───────────────────────────────────────────── */
@@ -375,7 +377,6 @@ function detectLangsQuick(files) {
  */
 function validateProjectZip(files) {
   const names = new Set(files.map((f) => f.name.toLowerCase()));
-  const paths = files.map((f) => (f.path || '').toLowerCase());
 
   // Strong config signals — any one of these confirms a project
   const CONFIG_FILES = [
@@ -571,10 +572,14 @@ async function handleGithubImport(url, onFilesReady) {
                 pkgJson.version = parsed.version || pkgJson.version;
                 pkgJson.dependencies = parsed.dependencies;
                 pkgJson.devDependencies = parsed.devDependencies;
-              } catch {}
+              } catch {
+                /* ignore JSON parse errors for non-root package.json */
+              }
             }
           }
-        } catch {}
+        } catch {
+          /* ignore file decode errors */
+        }
       }
     }
 
@@ -790,4 +795,17 @@ function loadDemoProject(onFilesReady) {
 
   showToast('Demo project loaded!', 'success');
   onFilesReady(files);
+}
+
+/* ─────────────────────────────────────────────
+   Expose globals for cross-file access via <script> tags
+───────────────────────────────────────────── */
+if (typeof window !== 'undefined') {
+  window.setupUploader = setupUploader;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    setupUploader,
+  };
 }

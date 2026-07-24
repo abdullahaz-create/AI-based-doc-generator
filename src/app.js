@@ -12,10 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === 'production'
-        ? false
-        : true,
+    origin: process.env.NODE_ENV === 'production' ? false : true,
     methods: ['GET', 'POST'],
   })
 );
@@ -35,10 +32,7 @@ app.get('/api/health', (_req, res) => {
 
   const keyConfigured =
     provider === 'gemini'
-      ? !!(
-          process.env.GEMINI_API_KEY &&
-          process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here'
-        )
+      ? !!(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here')
       : false;
 
   res.json({

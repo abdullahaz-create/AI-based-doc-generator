@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/130</span>
+                <span class='fraction'>0/134</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/84</span>
+                <span class='fraction'>0/92</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/119</span>
+                <span class='fraction'>0/123</span>
             </div>
         
             
@@ -427,7 +427,24 @@
 <a name='L362'></a><a href='#L362'>362</a>
 <a name='L363'></a><a href='#L363'>363</a>
 <a name='L364'></a><a href='#L364'>364</a>
-<a name='L365'></a><a href='#L365'>365</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L365'></a><a href='#L365'>365</a>
+<a name='L366'></a><a href='#L366'>366</a>
+<a name='L367'></a><a href='#L367'>367</a>
+<a name='L368'></a><a href='#L368'>368</a>
+<a name='L369'></a><a href='#L369'>369</a>
+<a name='L370'></a><a href='#L370'>370</a>
+<a name='L371'></a><a href='#L371'>371</a>
+<a name='L372'></a><a href='#L372'>372</a>
+<a name='L373'></a><a href='#L373'>373</a>
+<a name='L374'></a><a href='#L374'>374</a>
+<a name='L375'></a><a href='#L375'>375</a>
+<a name='L376'></a><a href='#L376'>376</a>
+<a name='L377'></a><a href='#L377'>377</a>
+<a name='L378'></a><a href='#L378'>378</a>
+<a name='L379'></a><a href='#L379'>379</a>
+<a name='L380'></a><a href='#L380'>380</a>
+<a name='L381'></a><a href='#L381'>381</a>
+<a name='L382'></a><a href='#L382'>382</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -443,6 +460,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -456,6 +479,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -494,6 +519,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -783,13 +809,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * app.js — Main application bootstrap and orchestrator
@@ -804,54 +838,63 @@
  * (upload, analysis, UI, export) is completely unchanged.
  */
 &nbsp;
+/* global applyTheme, toggleTheme, setupTabs, setupUploader, showToast,
+          showPhase, switchTab, analyzeProject, animateAnalysis,
+          generateSuggestions, populateDashboardHeader, renderFileTree,
+          renderOverview, renderSuggestions, generateDocs, downloadAllAsZip */
+&nbsp;
 /* ─────────────────────────────────────────────
    Global App State
 ───────────────────────────────────────────── */
-<span class="cstat-no" title="statement not covered" >window._appState = {</span>
-  phase: 'upload',
-  files: [],
-  analysis: null,
-  docs: null,
-  suggestions: [],
-  /** true once we've confirmed the AI backend is reachable + configured */
-  aiAvailable: false,
-};
+<span class="cstat-no" title="statement not covered" >if (typeof window !== 'undefined') {</span>
+<span class="cstat-no" title="statement not covered" >  window._appState = {</span>
+    phase: 'upload',
+    files: [],
+    analysis: null,
+    docs: null,
+    suggestions: [],
+    /** true once we've confirmed the AI backend is reachable + configured */
+    aiAvailable: false,
+  };
+}
 &nbsp;
 /* ─────────────────────────────────────────────
    Bootstrap
 ───────────────────────────────────────────── */
-<span class="cstat-no" title="statement not covered" >document.addEventListener('DOMContentLoaded', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-  // Restore theme
-  const savedTheme = <span class="cstat-no" title="statement not covered" >localStorage.getItem('aidocgen-theme') || 'dark';</span>
-<span class="cstat-no" title="statement not covered" >  applyTheme(savedTheme);</span>
+<span class="cstat-no" title="statement not covered" >if (typeof document !== 'undefined') {</span>
+<span class="cstat-no" title="statement not covered" >  document.addEventListener('DOMContentLoaded', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+    // Restore theme
+    const savedTheme = <span class="cstat-no" title="statement not covered" >localStorage.getItem('aidocgen-theme') || 'dark';</span>
+<span class="cstat-no" title="statement not covered" >    applyTheme(savedTheme);</span>
 &nbsp;
-  // Theme toggles
-<span class="cstat-no" title="statement not covered" >  document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);</span>
-<span class="cstat-no" title="statement not covered" >  document.getElementById('dash-theme-toggle')?.addEventListener('click', toggleTheme);</span>
+    // Theme toggles
+<span class="cstat-no" title="statement not covered" >    document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);</span>
+<span class="cstat-no" title="statement not covered" >    document.getElementById('dash-theme-toggle')?.addEventListener('click', toggleTheme);</span>
 &nbsp;
-  // Tab navigation
-<span class="cstat-no" title="statement not covered" >  setupTabs();</span>
+    // Tab navigation
+<span class="cstat-no" title="statement not covered" >    setupTabs();</span>
 &nbsp;
-  // Upload module
-<span class="cstat-no" title="statement not covered" >  setupUploader(onFilesReady);</span>
+    // Upload module
+<span class="cstat-no" title="statement not covered" >    setupUploader(onFilesReady);</span>
 &nbsp;
-  // Dashboard action buttons
-<span class="cstat-no" title="statement not covered" >  document.getElementById('download-all-btn')?.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-    const { docs, analysis } = <span class="cstat-no" title="statement not covered" >window._appState;</span>
-<span class="cstat-no" title="statement not covered" >    if (docs &amp;&amp; analysis) {</span>
-<span class="cstat-no" title="statement not covered" >      downloadAllAsZip(docs, analysis.projectName);</span>
-    } else {
-<span class="cstat-no" title="statement not covered" >      showToast('No documentation generated yet.', 'error');</span>
-    }
+    // Dashboard action buttons
+<span class="cstat-no" title="statement not covered" >    document.getElementById('download-all-btn')?.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+      const { docs, analysis } = <span class="cstat-no" title="statement not covered" >window._appState;</span>
+<span class="cstat-no" title="statement not covered" >      if (docs &amp;&amp; analysis) {</span>
+<span class="cstat-no" title="statement not covered" >        downloadAllAsZip(docs, analysis.projectName);</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        showToast('No documentation generated yet.', 'error');</span>
+      }
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    document.getElementById('new-project-btn')?.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      resetApp();</span>
+    });
+&nbsp;
+    // Probe the AI backend on startup (non-blocking — doesn't delay the UI)
+<span class="cstat-no" title="statement not covered" >    _probeAIService();</span>
   });
-&nbsp;
-<span class="cstat-no" title="statement not covered" >  document.getElementById('new-project-btn')?.addEventListener('click', <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    resetApp();</span>
-  });
-&nbsp;
-  // Probe the AI backend on startup (non-blocking — doesn't delay the UI)
-<span class="cstat-no" title="statement not covered" >  _probeAIService();</span>
-});
+}
 &nbsp;
 /* ─────────────────────────────────────────────
    AI Service Health Probe
@@ -1155,6 +1198,14 @@ function <span class="fstat-no" title="function not covered" >resetApp(</span>) 
 function <span class="fstat-no" title="function not covered" >sleep(</span>ms) {
 <span class="cstat-no" title="statement not covered" >  return new Promise(<span class="fstat-no" title="function not covered" >(r</span>) =&gt; <span class="cstat-no" title="statement not covered" >setTimeout(r, ms))</span>;</span>
 }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >if (typeof module !== 'undefined' &amp;&amp; module.exports) {</span>
+<span class="cstat-no" title="statement not covered" >  module.exports = {</span>
+    onFilesReady,
+    resetApp,
+    sleep,
+  };
+}
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -1162,7 +1213,7 @@ function <span class="fstat-no" title="function not covered" >sleep(</span>ms) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-23T11:37:44.831Z
+                at 2026-07-24T11:06:25.032Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

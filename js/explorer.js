@@ -117,3 +117,22 @@ function showToast(message, type = 'info') {
     toast.classList.add('hidden');
   }, duration);
 }
+
+/* ─────────────────────────────────────────────
+   Expose globals for cross-file access via <script> tags
+───────────────────────────────────────────── */
+if (typeof window !== 'undefined') {
+  window.downloadFile = downloadFile;
+  window.downloadAllAsZip = downloadAllAsZip;
+  window.copyToClipboard = copyToClipboard;
+  window.showToast = showToast;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    downloadFile,
+    downloadAllAsZip,
+    copyToClipboard,
+    showToast,
+  };
+}

@@ -118,7 +118,6 @@ Rules you must follow:
 ───────────────────────────────────────────────────────────────────── */
 function buildReadmePrompt(analysis) {
   const ctx = buildContextBlock(analysis);
-  const name = analysis.projectName || 'project';
 
   return `${SYSTEM_PREAMBLE}
 

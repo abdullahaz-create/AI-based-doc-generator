@@ -1,26 +1,22 @@
-const request = require("supertest");
-const app = require("../../src/app");
+const request = require('supertest');
+const app = require('../../src/app');
 
-describe("Health API", () => {
-
-  test("returns status 200", async () => {
-    const res = await request(app).get("/api/health");
+describe('Health API', () => {
+  test('returns status 200', async () => {
+    const res = await request(app).get('/api/health');
 
     expect(res.statusCode).toBe(200);
   });
 
-  test("returns JSON", async () => {
-    const res = await request(app).get("/api/health");
+  test('returns JSON', async () => {
+    const res = await request(app).get('/api/health');
 
-    expect(res.headers["content-type"])
-      .toMatch(/json/);
+    expect(res.headers['content-type']).toMatch(/json/);
   });
 
-  test("contains status field", async () => {
-    const res = await request(app).get("/api/health");
+  test('contains status field', async () => {
+    const res = await request(app).get('/api/health');
 
-    expect(res.body.status)
-      .toBe("ok");
+    expect(res.body.status).toBe('ok');
   });
-
 });
