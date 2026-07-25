@@ -13,7 +13,7 @@
     "coverage": "jest --coverage --passWithNoTests",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
