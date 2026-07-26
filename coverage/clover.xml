@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1784891338352" clover="3.2.0">
-  <project timestamp="1784891338352" name="All files">
+<coverage generated="1784975634516" clover="3.2.0">
+  <project timestamp="1784975634516" name="All files">
     <metrics statements="2279" coveredstatements="462" conditionals="2477" coveredconditionals="475" methods="391" coveredmethods="105" elements="5147" coveredelements="1042" complexity="0" loc="2279" ncloc="2279" packages="2" files="9" classes="9"/>
     <package name="Ai doc generator">
       <metrics statements="15" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="1" coveredmethods="0"/>
