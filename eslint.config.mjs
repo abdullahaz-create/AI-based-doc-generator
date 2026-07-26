@@ -38,6 +38,9 @@ export default defineConfig([
       globals: {
         ...globals.browser,
 
+        // Allow CommonJS export for tests
+        module: 'readonly',
+
         JSZip: 'readonly',
         marked: 'readonly',
         hljs: 'readonly',
