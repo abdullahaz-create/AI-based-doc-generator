@@ -1,4 +1,5 @@
 name: CI Pipeline
+
 on:
   push:
     branches:
@@ -40,5 +41,27 @@ jobs:
       - name: Generate Coverage
         run: npm run coverage
 
+      # SonarCloud Scan
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # Build Docker Image
       - name: Build Docker Image
         run: docker build -f docker/Dockerfile -t ai-doc-generator .
+
+      # Trivy Filesystem Scan
+      - name: Run Trivy Filesystem Scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: table
+
+      # Trivy Docker Image Scan
+      - name: Run Trivy Image Scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ai-doc-generator
+          format: table
