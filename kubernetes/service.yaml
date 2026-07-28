@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-doc-generator-service
+  namespace: ai-doc-generator
+
+spec:
+  selector:
+    app: ai-doc-generator
+
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3001
+
+  type: ClusterIP

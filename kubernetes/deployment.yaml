@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: ai-doc-generator
+  namespace: ai-doc-generator
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: ai-doc-generator
+
+  template:
+    metadata:
+      labels:
+        app: ai-doc-generator
+
+    spec:
+      containers:
+        - name: ai-doc-generator
+          image: abdullahazdev/ai-doc-generator:latest
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 3001
+
+          envFrom:
+            - configMapRef:
+                name: ai-doc-config
+            - secretRef:
+                name: ai-doc-secret
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3001
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3001
+            initialDelaySeconds: 20
+            periodSeconds: 10
