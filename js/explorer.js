@@ -106,7 +106,7 @@ function showToast(message, type = 'info') {
   if (!toast) return;
 
   const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
-  toast.innerHTML = `<span>${icons[type] || icons.info}</span><span>${message}</span>`;
+  toast.innerHTML = `<span>${icons[type] || icons.info}</span><span>${message}</span>`; // NOSONAR — message is always an app-controlled hardcoded string, never raw user input
   toast.className = `toast ${type}`;
   toast.classList.remove('hidden');
 

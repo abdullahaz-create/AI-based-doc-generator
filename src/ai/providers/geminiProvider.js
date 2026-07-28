@@ -71,11 +71,15 @@ async function generateDocumentation(prompt, opts = {}) {
 
   const model = getModel(); // may throw if API key missing
 
-  // Race the Gemini call against a timeout promise
+  // Race the Gemini call against a timeout promise.
+  // The timer ID is captured so clearTimeout() can always clean it up
+  // (whether the race resolves, rejects, or times out) — prevents Jest
+  // from reporting open Timeout handles via --detectOpenHandles.
   const generationPromise = model.generateContent(prompt);
 
+  let timeoutId;
   const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => {
+    timeoutId = setTimeout(() => {
       reject(
         new AIProviderError(`Gemini API request timed out after ${timeoutMs / 1000}s.`, 'TIMEOUT')
       );
@@ -84,8 +88,12 @@ async function generateDocumentation(prompt, opts = {}) {
 
   let result;
   try {
-    result = await Promise.race([generationPromise, timeoutPromise]);
+    result = await Promise.race([generationPromise, timeoutPromise]).finally(() => {
+      clearTimeout(timeoutId);
+    });
   } catch (err) {
+    // Ensure the timer is cleared even when the catch block re-throws
+    clearTimeout(timeoutId);
     if (err instanceof AIProviderError) throw err;
 
     // Map Gemini SDK errors to typed errors

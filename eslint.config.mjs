@@ -44,6 +44,7 @@ export default defineConfig([
         JSZip: 'readonly',
         marked: 'readonly',
         hljs: 'readonly',
+        DOMPurify: 'readonly',
       },
       sourceType: 'script',
     },
