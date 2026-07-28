@@ -190,7 +190,9 @@ function renderMarkdownPreview(docKey, markdown) {
         return code;
       },
     });
-    preview.innerHTML = marked.parse(markdown || '*No content generated.*');
+    const rawHtml = marked.parse(markdown || '*No content generated.*');
+    preview.innerHTML =
+      typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawHtml) : rawHtml;
 
     // Apply syntax highlighting to code blocks
     if (typeof hljs !== 'undefined') {
