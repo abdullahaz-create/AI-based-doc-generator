@@ -1927,7 +1927,7 @@ function calculateScores(a) {
   if (a.hasLicense) h += 5;
   if (a.detectedDatabase.type) h += 5;
   if (a.architecture?.pattern) h += 5;
-  if (a.detectedFramework.data) h += 5;
+  if (a.detectedFramework.primary) h += 5;
 
   return { qualityScore: Math.min(q, 100), healthScore: Math.min(h, 100) };
 }

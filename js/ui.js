@@ -53,39 +53,56 @@ async function animateAnalysis(analysis) {
   const bar = document.getElementById('analysis-bar');
   const pct = document.getElementById('analysis-pct');
 
+  // Safe accessors — analysis fields may be missing for small/unusual projects
+  const fileSize = (typeof analysis.formatBytes === 'function')
+    ? analysis.formatBytes(analysis.totalSize || 0)
+    : `${Math.round((analysis.totalSize || 0) / 1024)} KB`;
+
+  const topDirCount = analysis.folderStructure?.children?.length || 0;
+  const depCount = Object.keys(analysis.dependencies || {}).length;
+  const devDepCount = Object.keys(analysis.devDependencies || {}).length;
+  const routeCount = (analysis.apiRoutes || []).length;
+  const detectedFwParts = [analysis.metaFramework, analysis.framework, analysis.backendFramework].filter(Boolean);
+
   const stepMessages = {
-    scanning: `Found ${analysis.fileCount} files (${analysis.formatBytes(analysis.totalSize)})`,
-    framework:
-      analysis.framework || analysis.backendFramework || analysis.metaFramework
-        ? `Detected: ${[analysis.metaFramework, analysis.framework, analysis.backendFramework].filter(Boolean).join(' + ')}`
-        : `Primary language: ${analysis.primaryLanguage}`,
-    deps: Object.keys(analysis.dependencies).length
-      ? `${Object.keys(analysis.dependencies).length} prod, ${Object.keys(analysis.devDependencies).length} dev dependencies`
+    scanning: `Found ${analysis.fileCount || 0} files (${fileSize})`,
+    framework: detectedFwParts.length
+      ? `Detected: ${detectedFwParts.join(' + ')}`
+      : `Primary language: ${analysis.primaryLanguage || 'Unknown'}`,
+    deps: depCount
+      ? `${depCount} prod, ${devDepCount} dev dependencies`
       : 'No package manager detected',
-    api:
-      analysis.apiRoutes.length > 0
-        ? `Found ${analysis.apiRoutes.length} API endpoint${analysis.apiRoutes.length > 1 ? 's' : ''}`
-        : 'No API routes found',
-    arch: analysis.folderStructure.children?.length
-      ? `Mapped ${analysis.folderStructure.children.length} top-level directories`
+    api: routeCount > 0
+      ? `Found ${routeCount} API endpoint${routeCount > 1 ? 's' : ''}`
+      : 'No API routes found',
+    arch: topDirCount
+      ? `Mapped ${topDirCount} top-level directories`
       : 'Architecture mapped',
     generating: 'README, API docs, Architecture, Contributing, Changelog',
   };
 
-  for (let i = 0; i < STEPS.length; i++) {
-    const stepId = `step-${STEPS[i]}`;
-    const stepEl = document.getElementById(stepId);
-    const detailEl = document.getElementById(`${stepId}-detail`);
+  try {
+    for (let i = 0; i < STEPS.length; i++) {
+      const stepId = `step-${STEPS[i]}`;
+      const stepEl = document.getElementById(stepId);
+      const detailEl = document.getElementById(`${stepId}-detail`);
 
-    if (stepEl) stepEl.classList.add('running');
-    await sleep(400 + Math.random() * 300);
+      if (stepEl) stepEl.classList.add('running');
+      await sleep(400 + Math.random() * 300);
 
-    if (bar) bar.style.width = STEP_PCT[i] + '%';
-    if (pct) pct.textContent = STEP_PCT[i] + '%';
-    if (detailEl) detailEl.textContent = stepMessages[STEPS[i]] || 'Done';
-    if (stepEl) stepEl.classList.replace('running', 'done');
+      if (bar) bar.style.width = STEP_PCT[i] + '%';
+      if (pct) pct.textContent = STEP_PCT[i] + '%';
+      if (detailEl) detailEl.textContent = stepMessages[STEPS[i]] || 'Done';
+      if (stepEl) stepEl.classList.replace('running', 'done');
 
-    await sleep(200);
+      await sleep(200);
+    }
+  } catch (err) {
+    // If the animation crashes for any reason, ensure bar reaches 100%
+    // so the pipeline can continue to the dashboard
+    console.warn('[animateAnalysis] Animation step error (non-fatal):', err);
+    if (bar) bar.style.width = '100%';
+    if (pct) pct.textContent = '100%';
   }
 }
 
