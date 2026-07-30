@@ -38,7 +38,7 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '5mb' }));
 
 // HTTP request logging middleware
 app.use((req, _res, next) => {

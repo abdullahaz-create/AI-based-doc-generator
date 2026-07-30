@@ -303,10 +303,10 @@ async function handleZipUpload(file, onFilesReady) {
       });
 
       processed++;
-      if (processed % 20 === 0) {
+      if (processed % 5 === 0) {
         const pct = 30 + Math.round((processed / total) * 60);
         setUploadProgress(pct, `Parsing files… (${processed}/${total})`);
-        await sleep(0); // Yield to browser
+        await sleep(0); // Yield to browser — keep UI responsive
       }
     }
 
@@ -500,7 +500,7 @@ async function handleGithubImport(url, onFilesReady) {
 
   try {
     // Fetch repo metadata
-    const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repoName}`);
+    const repoRes = await fetchWithAbort(`https://api.github.com/repos/${owner}/${repoName}`, 10_000);
     if (!repoRes.ok) {
       throw new Error(
         repoRes.status === 404
@@ -512,8 +512,9 @@ async function handleGithubImport(url, onFilesReady) {
 
     // Fetch file tree
     const branch = repoData.default_branch || 'main';
-    const treeRes = await fetch(
-      `https://api.github.com/repos/${owner}/${repoName}/git/trees/${branch}?recursive=1`
+    const treeRes = await fetchWithAbort(
+      `https://api.github.com/repos/${owner}/${repoName}/git/trees/${branch}?recursive=1`,
+      10_000
     );
     const treeData = treeRes.ok ? await treeRes.json() : { tree: [] };
 
@@ -531,7 +532,7 @@ async function handleGithubImport(url, onFilesReady) {
       repository: repoData.clone_url || '',
     };
 
-    // Fetch important files
+    // Fetch important files in parallel with individual timeouts
     const IMPORTANT_FILES = [
       'package.json',
       'requirements.txt',
@@ -545,40 +546,50 @@ async function handleGithubImport(url, onFilesReady) {
     ];
     const rawBase = `https://raw.githubusercontent.com/${owner}/${repoName}/${branch}`;
 
-    for (const fname of IMPORTANT_FILES) {
-      const fileEntry = (treeData.tree || []).find(
+    const fileEntries = IMPORTANT_FILES.map((fname) => {
+      const entry = (treeData.tree || []).find(
         (t) => t.path === fname || t.path.endsWith('/' + fname)
       );
-      if (fileEntry) {
-        try {
-          const r = await fetch(`${rawBase}/${fileEntry.path}`);
-          if (r.ok) {
-            const content = await r.text();
-            files.push({
-              path: fileEntry.path,
-              name: fname,
-              isDir: false,
-              size: content.length,
-              content,
-              ext: fname.slice(fname.lastIndexOf('.')),
-            });
+      return entry ? { fname, entry } : null;
+    }).filter(Boolean);
 
-            // Override package.json with repo metadata if it's the root one
-            if (fname === 'package.json' && fileEntry.path === 'package.json') {
-              try {
-                const parsed = JSON.parse(content);
-                pkgJson.name = parsed.name || pkgJson.name;
-                pkgJson.description = parsed.description || pkgJson.description;
-                pkgJson.version = parsed.version || pkgJson.version;
-                pkgJson.dependencies = parsed.dependencies;
-                pkgJson.devDependencies = parsed.devDependencies;
-              } catch {
-                /* ignore JSON parse errors for non-root package.json */
-              }
-            }
-          }
+    // Fetch all important files concurrently
+    const fetchedFiles = await Promise.all(
+      fileEntries.map(async ({ fname, entry }) => {
+        try {
+          const r = await fetchWithAbort(`${rawBase}/${entry.path}`, 8_000);
+          if (!r.ok) return null;
+          const content = await r.text();
+          return {
+            path: entry.path,
+            name: fname,
+            isDir: false,
+            size: content.length,
+            content,
+            ext: fname.slice(fname.lastIndexOf('.')),
+            _originalFname: fname,
+            _entryPath: entry.path,
+          };
         } catch {
-          /* ignore file decode errors */
+          return null; // silently skip failed or timed-out files
+        }
+      })
+    );
+
+    for (const f of fetchedFiles) {
+      if (!f) continue;
+      files.push(f);
+      // Override package.json with repo metadata if it's the root one
+      if (f._originalFname === 'package.json' && f._entryPath === 'package.json') {
+        try {
+          const parsed = JSON.parse(f.content);
+          pkgJson.name = parsed.name || pkgJson.name;
+          pkgJson.description = parsed.description || pkgJson.description;
+          pkgJson.version = parsed.version || pkgJson.version;
+          pkgJson.dependencies = parsed.dependencies;
+          pkgJson.devDependencies = parsed.devDependencies;
+        } catch {
+          /* ignore JSON parse errors */
         }
       }
     }
@@ -621,6 +632,20 @@ async function handleGithubImport(url, onFilesReady) {
     if (btn) btn.disabled = false;
     if (txt) txt.textContent = 'Import Repository';
     if (spn) spn.classList.add('hidden');
+  }
+}
+
+/**
+ * fetch() wrapper with a per-request AbortController timeout.
+ * Throws on timeout or network error — never hangs indefinitely.
+ */
+async function fetchWithAbort(url, timeoutMs) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
   }
 }
 

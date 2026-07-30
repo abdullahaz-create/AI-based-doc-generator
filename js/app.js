@@ -113,8 +113,9 @@ async function onFilesReady(files) {
   // Transition to analysis phase
   showPhase('analysis');
 
-  // Give the browser time to paint the analysis screen
-  await sleep(100);
+  // Yield to the browser so it can paint the analysis screen BEFORE
+  // the synchronous (CPU-bound) analyzeProject() call blocks the main thread.
+  await sleep(80);
 
   try {
     // ── Step 1: Static analysis (always runs, unchanged) ──────────────
@@ -138,17 +139,26 @@ async function onFilesReady(files) {
     // ── Step 5: Render dashboard (unchanged) ─────────────────────────
     showPhase('dashboard');
     populateDashboardHeader(analysis);
-    renderFileTree(analysis.folderStructure, document.getElementById('file-tree'));
+
+    // Guard: folderStructure may be empty for very minimal projects
+    const fileTreeEl = document.getElementById('file-tree');
+    if (fileTreeEl && analysis.folderStructure) {
+      renderFileTree(analysis.folderStructure, fileTreeEl);
+    }
+
     renderOverview(analysis, docs, suggestions);
     renderSuggestions(suggestions);
 
     // Update file tree stats
     const treeStats = document.getElementById('tree-stats');
     if (treeStats) {
-      treeStats.textContent = `${analysis.fileCount} files · ${analysis.formatBytes(analysis.totalSize)}`;
+      const sizeStr = typeof analysis.formatBytes === 'function'
+        ? analysis.formatBytes(analysis.totalSize || 0)
+        : `${Math.round((analysis.totalSize || 0) / 1024)} KB`;
+      treeStats.textContent = `${analysis.fileCount || 0} files · ${sizeStr}`;
     }
   } catch (err) {
-    console.error('Analysis failed:', err);
+    console.error('Analysis pipeline failed:', err);
     showToast('Analysis failed: ' + (err.message || 'Unknown error'), 'error');
     showPhase('upload');
   }
